@@ -132,6 +132,74 @@ class Competition_OvershadowingAndForwardBlocking(cc.ClassicalConditioningExperi
 
 
 @cc.registry.register
+class Competition_Unblocking(cc.ClassicalConditioningExperiment):
+  """In forward blocking B -> AB+, increasing or decreasing the US during AB presentation
+  can increase responding to the blocked A.
+
+  Source: 7.3, 7.4 - Figure 31
+  """
+  def __init__(self, n_first=40, n_second=280, n_test=1):
+    super().__init__({
+      'weak/weak':
+        cc.seq(
+          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
+      'weak/strong':
+        cc.seq(
+          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('AB#'), repeat=n_second, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
+      'strong/strong':
+        cc.seq(
+          cc.seq(cc.trial('B#'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('AB#'), repeat=n_second, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
+      'strong/weak':
+        cc.seq(
+          cc.seq(cc.trial('B#'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
+    })
+    self.meta = dict(
+      ylabel='suppression ratio',
+      ydetail='suppression ratio',
+      citation='Dickinson et al. (1976)',
+    )
+    self.results = pd.melt(
+      pd.DataFrame(
+        columns=['group', 'A'],
+        data=[
+          ['weak/weak', 0.47],
+          ['weak/strong', 0.32],
+          ['strong/strong', 0.44],
+          ['strong/weak', 0.30],
+        ]
+      ),
+      id_vars=['group']
+    )
+    self.plots = [
+      lambda df, ax, **kwargs: cc.
+      plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
+    ]
+
+  def summarize(self):
+    return pd.melt(
+      self.dataframe(
+        lambda x: {
+          'A': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+        } if x['phase'] == 'test' else None,
+        include_trial=False,
+      ),
+      id_vars=['group']
+    ).groupby(['group', 'variable'], sort=False).mean().reset_index()
+
+
+@cc.registry.register
 class Competition_BackwardBlocking(cc.ClassicalConditioningExperiment):
   """Training AB+ -> B+ results in weaker conditioning to A than training A+ alone (backward
   blocking).
@@ -175,6 +243,129 @@ class Competition_BackwardBlocking(cc.ClassicalConditioningExperiment):
       self.dataframe(
         lambda x: {
           'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+        } if x['phase'] == 'test' else None,
+        include_trial=False,
+      ),
+      id_vars=['group']
+    ).groupby(['group', 'variable'], sort=False).mean().reset_index()
+
+
+@cc.registry.register
+class Competition_Overexpectation(cc.ClassicalConditioningExperiment):
+  """Training A+ -> B+ -> AB+ results in lower conditioning to A than without the AB+ compound.
+
+  Source: 7.8 - Figure 34
+  """
+  def __init__(self, n_first=16, n_second=2, n_test=2):
+    super().__init__({
+      'control 1':
+        cc.seq(
+          cc.seq(cc.trial('A+'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
+      'control 2':
+        cc.seq(
+          cc.seq(cc.trial('A+'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('A+'), repeat=n_second, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
+      'overexpectation':
+        cc.seq(
+          cc.seq(cc.trial('A+'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
+    })
+    self.meta = dict(
+      ylabel='suppression ratio',
+      ydetail='suppression ratio',
+      citation='Rescorla (1970)',
+    )
+    self.results = pd.melt(
+      pd.DataFrame(
+        columns=['group', 'A'],
+        data=[
+          ['control 1', 0.14],
+          ['control 2', 0.11],
+          ['overexpectation', 0.44],
+        ]
+      ),
+      id_vars=['group']
+    )
+    self.plots = [
+      lambda df, ax, **kwargs: cc.
+      plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
+    ]
+
+  def summarize(self):
+    return pd.melt(
+      self.dataframe(
+        lambda x: {
+          'A': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+        } if x['phase'] == 'test' else None,
+        include_trial=False,
+      ),
+      id_vars=['group']
+    ).groupby(['group', 'variable'], sort=False).mean().reset_index()
+
+
+@cc.registry.register
+class Competition_Superconditioning(cc.ClassicalConditioningExperiment):
+  """Training B- -> AB+ (superconditioning) results in higher conditioning to A than training AB+
+  only (overshadowing) and yet higher than training B+ -> AB+ (forward blocking).
+
+  Source: 7.9 - Figure 35
+  """
+  def __init__(self, n_first=40, n_second=2, n_test=3):
+    super().__init__({
+      'forward blocking':
+        cc.seq(
+          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
+      'overshadowing':
+        cc.seq(
+          cc.seq(cc.trial('-'), cc.trial('+'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
+      'superconditioning':
+        cc.seq(
+          cc.seq(cc.trial('B-'), cc.trial('+'), repeat=n_first, name='train'),
+          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
+    })
+    self.meta = dict(
+      ylabel='suppression ratio',
+      ydetail='suppression ratio',
+      citation='Dickinson et al. (1976)',
+    )
+    self.results = pd.melt(
+      pd.DataFrame(
+        columns=['group', 'A'],
+        data=[
+          ['forward blocking', 0.31],
+          ['overshadowing', 0.25],
+          ['superconditioning', 0.16],
+        ]
+      ),
+      id_vars=['group']
+    )
+    self.plots = [
+      lambda df, ax, **kwargs: cc.
+      plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
+    ]
+
+  def summarize(self):
+    return pd.melt(
+      self.dataframe(
+        lambda x: {
+          'A': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),

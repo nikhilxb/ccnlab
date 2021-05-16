@@ -8,7 +8,7 @@ class Extinction_ContinuousVsPartial(cc.ClassicalConditioningExperiment):
 
   Source: 2.1, 2,2 - Figure 6
   """
-  def __init__(self, n_train_continuous=5, n_train_partial=10, n_extinction=16):
+  def __init__(self, n_train_continuous=10, n_train_partial=5, n_extinction=16):
     super().__init__({
       'continuous':
         cc.seq(

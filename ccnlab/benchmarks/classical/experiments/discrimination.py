@@ -228,6 +228,167 @@ class Discrimination_NegativePatterning(cc.ClassicalConditioningExperiment):
 
 
 @cc.registry.register
+class Discrimination_NegativePatterningCommonCue(cc.ClassicalConditioningExperiment):
+  """Adding a common cue C to negative patterning decreases discrimination.
+
+  Source: 4.5 - Figure 14
+  """
+  def __init__(self, n=70):
+    super().__init__({
+      'control':
+        cc.seq(
+          cc.seq(cc.trial('A+'), name='train-A'),
+          cc.seq(cc.trial('B+'), name='train-B'),
+          cc.seq(cc.trial('AB-'), name='train-AB'),
+          repeat=n,
+        ),
+      'common cue':
+        cc.seq(
+          cc.seq(cc.trial('AC+'), name='train-AC'),
+          cc.seq(cc.trial('BC+'), name='train-BC'),
+          cc.seq(cc.trial('ABC-'), name='train-ABC'),
+          repeat=n,
+        ),
+    })
+    self.meta = dict(
+      ylabel='conditioned response',
+      ydetail='conditioned response [per min]',
+      citation='Redhead & Pearce (1998)',
+    )
+    self.results = pd.concat([
+      pd.melt(
+        pd.DataFrame(
+          columns=['group', 'session', 'A', 'B', 'AB'],
+          data=[
+            ['control', 1, 68, 56, 36],
+            ['control', 2, 72, 60, 26],
+            ['control', 3, 75, 64, 15],
+            ['control', 4, 78, 60, 2],
+            ['control', 5, 78, 74, 2],
+            ['control', 6, 86, 70, 1],
+            ['control', 7, 84, 76, 0],
+          ]
+        ),
+        id_vars=['group', 'session']
+      ),
+      pd.melt(
+        pd.DataFrame(
+          columns=['group', 'session', 'AC', 'BC', 'ABC'],
+          data=[
+            ['common cue', 1, 64, 64, 64],
+            ['common cue', 2, 64, 64, 64],
+            ['common cue', 3, 74, 80, 64],
+            ['common cue', 4, 68, 75, 36],
+            ['common cue', 5, 82, 82, 28],
+            ['common cue', 6, 86, 90, 32],
+            ['common cue', 7, 92, 88, 18],
+          ]
+        ),
+        id_vars=['group', 'session']
+      )
+    ])
+
+    self.plots = [
+      lambda df, ax, **kwargs: cc.plot_lines(
+        df, ax=ax, x='session', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'], legend=False
+      )
+    ]
+
+  def summarize(self):
+    return cc.trials_to_sessions(
+      pd.melt(
+        self.dataframe(
+          lambda x: {
+            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          } if x['phase'] == 'train-A' else {
+            'B': cc.conditioned_response(x['timesteps'], x['response'], ['B']),
+          } if x['phase'] == 'train-B' else {
+            'AB': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'B']),
+          } if x['phase'] == 'train-AB' else {
+            'AC': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'C']),
+          } if x['phase'] == 'train-AC' else {
+            'BC': cc.conditioned_response(x['timesteps'], x['response'], ['B', 'C']),
+          } if x['phase'] == 'train-BC' else {
+            'ABC': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'B', 'C']),
+          } if x['phase'] == 'train-ABC' else None,
+          include_trial=False,
+          include_trial_in_phase=True,
+        ),
+        id_vars=['group', 'trial in phase']
+      ).dropna().groupby(['group', 'trial in phase', 'variable'], sort=False).mean().reset_index(),
+      10,
+      trial_name='trial in phase'
+    )
+
+
+@cc.registry.register
+class Discrimination_NegativePatterningThreeCues(cc.ClassicalConditioningExperiment):
+  """Non-reinforced ABC- intermixed with reinforced A+ and BC+ results in responding to ABC that is
+  weaker than the sum of the individual responses to A and BC.
+
+  Source: 4.6 - Figure 15
+  """
+  def __init__(self, n=50):
+    super().__init__({
+      'main':
+        cc.seq(
+          cc.seq(cc.trial('A+'), name='train-A'),
+          cc.seq(cc.trial('BC+'), name='train-BC'),
+          cc.seq(cc.trial('ABC-'), name='train-ABC'),
+          repeat=n,
+        ),
+    })
+    self.meta = dict(
+      ylabel='conditioned response',
+      ydetail='conditioned response [per min]',
+      citation='Redhead & Pearce (1995)',
+    )
+    self.results = pd.melt(
+      pd.DataFrame(
+        columns=['group', 'session', 'A', 'BC', 'ABC'],
+        data=[
+          ['main', 1, 80, 55, 64],
+          ['main', 2, 142, 93, 101],
+          ['main', 3, 158, 110, 95],
+          ['main', 4, 164, 115, 75],
+          ['main', 5, 168, 135, 72],
+          ['main', 6, 160, 120, 53],
+          ['main', 7, 164, 143, 53],
+          ['main', 8, 160, 141, 43],
+          ['main', 9, 166, 152, 53],
+          ['main', 10, 169, 158, 51],
+        ]
+      ),
+      id_vars=['group', 'session']
+    )
+    self.plots = [
+      lambda df, ax, **kwargs: cc.plot_lines(
+        df, ax=ax, x='session', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'], legend=False
+      )
+    ]
+
+  def summarize(self):
+    return cc.trials_to_sessions(
+      pd.melt(
+        self.dataframe(
+          lambda x: {
+            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          } if x['phase'] == 'train-A' else {
+            'BC': cc.conditioned_response(x['timesteps'], x['response'], ['B', 'C']),
+          } if x['phase'] == 'train-BC' else {
+            'ABC': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'B', 'C']),
+          } if x['phase'] == 'train-ABC' else None,
+          include_trial=False,
+          include_trial_in_phase=True,
+        ),
+        id_vars=['group', 'trial in phase']
+      ).groupby(['group', 'trial in phase', 'variable'], sort=False).mean().reset_index(),
+      5,
+      trial_name='trial in phase'
+    )
+
+
+@cc.registry.register
 class Discrimination_Biconditional(cc.ClassicalConditioningExperiment):
   """Biconditional discrimination between compounds (AC+/BD+ vs. AD-/BC-, where no single CS
   predicts reinforcement or non-reinforcement) is possible but harder than component discrimination
@@ -310,5 +471,168 @@ class Discrimination_Biconditional(cc.ClassicalConditioningExperiment):
         id_vars=['group', 'trial in phase']
       ).groupby(['group', 'trial in phase', 'variable'], sort=False).mean().reset_index(),
       10,
+      trial_name='trial in phase'
+    )
+
+
+@cc.registry.register
+class Discrimination_FeaturePositive(cc.ClassicalConditioningExperiment):
+  """Reinforced BA+, alternated with non-reinforced A-, results in stronger responding to BA than A
+  alone. In the simultaneous case (BA+), B gains an excitatory association with the US; in the
+  serial case (B -> A+), B does not gain an excitatory association with the US.
+
+  Source: 4.12, 4.13 - Figure 20
+  """
+  def __init__(self, n_sim=360, n_serial=780):
+    super().__init__({
+      'simultaneous':
+        cc.seq(
+          cc.seq(cc.trial('BA+'), name='train-BA'),
+          cc.seq(cc.trial('A-'), name='train-A'),
+          repeat=n_sim // 2,
+        ),
+      'serial':
+        cc.seq(
+          cc.seq(cc.trial(('B', 0, 4), ('A', 4, 8), ('+', 7, 8)), name='train-BA'),
+          cc.seq(cc.trial('A-'), name='train-A'),
+          repeat=n_serial // 2,
+        ),
+    })
+    self.meta = dict(
+      ylabel='conditioned response',
+      ydetail='total headjerks [%]',
+      citation='Ross & Holland (1981)',
+    )
+    self.results = pd.melt(
+      pd.DataFrame(
+        columns=['group', 'session', 'BA', 'A'],
+        data=[
+          ['simultaneous', 1, 2, 3],
+          ['simultaneous', 2, 4, 2],
+          ['simultaneous', 3, 21, 1],
+          ['simultaneous', 4, 56, 2],
+          ['simultaneous', 5, 54, 0],
+          ['simultaneous', 6, 65, 0],
+          ['serial', 1, 0, 0],
+          ['serial', 2, 4, 1],
+          ['serial', 3, 0, 4],
+          ['serial', 4, 21, 21],
+          ['serial', 5, 39, 25],
+          ['serial', 6, 51, 30],
+          ['serial', 7, 51, 24],
+          ['serial', 8, 57, 13],
+          ['serial', 9, 36, 11],
+          ['serial', 10, 49, 11],
+          ['serial', 11, 36, 7],
+          ['serial', 12, 57, 9],
+          ['serial', 13, 53, 9],
+        ]
+      ),
+      id_vars=['group', 'session']
+    )
+    self.plots = [
+      lambda df, ax, **kwargs: cc.
+      plot_lines(df, ax=ax, x='session', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
+    ]
+
+  def summarize(self):
+    return cc.trials_to_sessions(
+      pd.melt(
+        self.dataframe(
+          lambda x: {
+            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          } if x['phase'] == 'train-A' else {
+            # Only measure during A (i.e. tone in original experiment).
+            'BA': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          } if x['phase'] == 'train-BA' else None,
+          include_trial=False,
+          include_trial_in_phase=True,
+        ),
+        id_vars=['group', 'trial in phase']
+      ).groupby(['group', 'trial in phase', 'variable'], sort=False).mean().reset_index(),
+      30,
+      trial_name='trial in phase'
+    )
+
+
+@cc.registry.register
+class Discrimination_FeatureNegative(cc.ClassicalConditioningExperiment):
+  """Non-reinforced BA-, alternated with reinforced A+, results in weaker responding to BA than A
+  alone. In the simultaneous case (BA-), B gains an inhibitory association with the US; in the
+  serial case (B -> A-), B does not gain an inhibitory association with the US.
+
+  Source: 4.14, 4.15 - Figure 21
+  """
+  def __init__(self, n_acquisition=2, n_sim=3, n_serial=12, tps=4):
+    super().__init__({
+      'simultaneous':
+        cc.seq(
+          cc.seq(cc.trial('A+'), repeat=n_acquisition * tps, name='acquisition'),
+          cc.seq(
+            cc.seq(cc.trial('BA-'), name='train-BA'),
+            cc.seq(cc.trial('A+'), name='train-A'),
+            repeat=n_sim * tps,
+          ),
+        ),
+      'serial':
+        cc.seq(
+          cc.seq(cc.trial('A+'), repeat=n_acquisition * tps, name='acquisition'),
+          cc.seq(
+            cc.seq(cc.trial(('B', 0, 4), ('A', 4, 8)), name='train-BA'),
+            cc.seq(cc.trial('A+'), name='train-A'),
+            repeat=n_serial * tps,
+          ),
+        )
+    })
+    self._tps = tps
+    self.meta = dict(
+      ylabel='suppression ratio',
+      ydetail='mean suppression ratio',
+      citation='Holland (1984)',
+    )
+    self.results = pd.melt(
+      pd.DataFrame(
+        columns=['group', 'session', 'BA', 'A'],
+        data=[
+          ['simultaneous', 1, 0.34, 0.17],
+          ['simultaneous', 2, 0.39, 0.07],
+          ['simultaneous', 3, 0.49, 0.06],
+          ['serial', 1, 0.15, 0.13],
+          ['serial', 2, 0.19, 0.16],
+          ['serial', 3, 0.23, 0.16],
+          ['serial', 4, 0.18, 0.07],
+          ['serial', 5, 0.22, 0.15],
+          ['serial', 6, 0.29, 0.08],
+          ['serial', 7, 0.22, 0.10],
+          ['serial', 8, 0.29, 0.10],
+          ['serial', 9, 0.33, 0.13],
+          ['serial', 10, 0.40, 0.14],
+          ['serial', 11, 0.41, 0.08],
+          ['serial', 12, 0.43, 0.14],
+        ]
+      ),
+      id_vars=['group', 'session']
+    )
+    self.plots = [
+      lambda df, ax, **kwargs: cc.
+      plot_lines(df, ax=ax, x='session', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
+    ]
+
+  def summarize(self):
+    return cc.trials_to_sessions(
+      pd.melt(
+        self.dataframe(
+          lambda x: {
+            'A': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+          } if x['phase'] == 'train-A' else {
+            # Only measure during A (i.e. noise in original experiment).
+            'BA': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+          } if x['phase'] == 'train-BA' else None,
+          include_trial=False,
+          include_trial_in_phase=True,
+        ),
+        id_vars=['group', 'trial in phase']
+      ).groupby(['group', 'trial in phase', 'variable'], sort=False).mean().reset_index(),
+      self._tps,
       trial_name='trial in phase'
     )

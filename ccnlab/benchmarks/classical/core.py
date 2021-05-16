@@ -24,7 +24,7 @@ Sample = namedtuple('Sample', ['prob'])
 Sequence = namedtuple('Sequence', ['children', 'repeat', 'name'], defaults=(1, None))
 
 
-def trial(*args, ctx='K1', us_mapping={'+': 1, '-': 0}, cs_active=(4, 8), us_active=(7, 8)):
+def trial(*args, ctx='K1', us_mapping={'-': 0, '+': 1, '#': 2}, cs_active=(4, 8), us_active=(7, 8)):
   cs = tuple()
   us = None
   assert isinstance(ctx, str)
@@ -33,7 +33,7 @@ def trial(*args, ctx='K1', us_mapping={'+': 1, '-': 0}, cs_active=(4, 8), us_act
     assert len(args) == 1
     for char in args[0]:
       if char in us_mapping:
-        us = Stimulus('+', us_active[0], us_active[1], us_mapping[char])
+        us = Stimulus(char, us_active[0], us_active[1], us_mapping[char])
       else:
         cs += (Stimulus(char, cs_active[0], cs_active[1], 1),)
   else:
@@ -51,7 +51,7 @@ def trial(*args, ctx='K1', us_mapping={'+': 1, '-': 0}, cs_active=(4, 8), us_act
         assert len(item) == 3
         stim, start, end = item
         if stim in us_mapping:
-          us = Stimulus('+', start, end, us_mapping[stim])
+          us = Stimulus(stim, start, end, us_mapping[stim])
         else:
           cs += (Stimulus(*item),)
   return Trial(cs, ctx=ctx, us=us)
@@ -114,6 +114,47 @@ def build_stimuli(node):
 
   recurse(node, None)
   return stimuli, phases
+
+  import textwrap
+
+
+def repr_node(node):
+  name = type(node).__name__
+  if name == 'Trial':
+    stimuli = []
+    if node.cs is not None: stimuli.extend(node.cs)
+    if node.us is not None: stimuli.append(node.us)
+    if len(stimuli) == 0: return ''
+    stimuli.sort(key=lambda x: x.start)
+    prefix = stimuli[0].stim
+    end = stimuli[0].end
+    for curr in stimuli[1:]:
+      if curr.start >= end:
+        end = curr.end
+        prefix += ' -> '
+      else:
+        end = max(end, curr.end)
+      prefix += curr.stim
+    return prefix
+  if name == 'Sample':
+    items = [
+      '(prob={}) {{\n{}\n}}'.format(p, textwrap.indent(repr_node(child), '  '))
+      for child, p in node.prob.items()
+    ]
+    return '\n'.join(items)
+  if name == 'Sequence':
+    prefix = ''
+    if node.name is not None: prefix += '{} '.format(node.name)
+    if node.repeat > 1: prefix += '(repeat={}) '.format(node.repeat)
+    inner = '\n'.join(textwrap.indent(repr_node(child), '  ') for child in node.children)
+    prefix += '{{\n{}\n}}'.format(inner)
+    return prefix
+
+
+def repr_spec(spec):
+  return '\n'.join(
+    '{}:\n{}'.format(group, textwrap.indent(repr_node(tree), '  ')) for group, tree in spec.items()
+  )
 
 
 # ==================================================================================================
@@ -269,16 +310,8 @@ def conditioned_response(stimuli, responses, during_cs, during_us=False):
   return float(num) / denom
 
 
-def suppression(stimuli, responses, during_cs, during_us=False):
-  cs = count_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
-  ctx = count_responses(stimuli, responses, during_cs=[], during_us=during_us)
-  num = ctx - cs
-  denom = ctx
-  if denom == 0: return 0
-  return float(num) / denom
-
-
 def suppression_ratio(stimuli, responses, during_cs, during_us=False):
+  responses = [1 if r == 0 else 1 for r in responses]
   cs = count_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
   ctx = count_responses(stimuli, responses, during_cs=[], during_us=during_us)
   num = cs
