@@ -186,94 +186,108 @@ class Recovery_ExternalDisinhibition(cc.ClassicalConditioningExperiment):
     ).groupby(['group', 'variable'], sort=False).mean().reset_index()
 
 
-# @cc.registry.register
-# class Recovery_SpontaneousRecovery(cc.ClassicalConditioningExperiment):
-#   """Presenting the CS some time after the subject has stopped responding might yield renewed
-#   responding.
+@cc.registry.register
+class Recovery_SpontaneousRecovery(cc.ClassicalConditioningExperiment):
+  """Presenting the CS some time after the subject has stopped responding might yield renewed
+  responding.
 
-#   Source: 10.6 - Figure 54
-#   """
-#   def __init__(self, n_acquisition=12, n_extinction=4, n_delay=12, n_test=4):
-#     super().__init__({
-#       'no delay':
-#         cc.seq(
-#           cc.seq(cc.trial('A+', ctx='K1'), repeat=n_acquisition, name='acquisition'),
-#           cc.seq(cc.trial('A-', ctx='K1'), repeat=n_extinction, name='extinction'),
-#           cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
-#         ),
-#       'delay':
-#         cc.seq(
-#           cc.seq(cc.trial('A+', ctx='K1'), repeat=n_acquisition, name='acquisition'),
-#           cc.seq(cc.trial('-', ctx='K2'), repeat=n_delay, name='delay'),
-#           cc.seq(cc.trial('A-', ctx='K1'), repeat=n_extinction, name='extinction'),
-#           cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
-#         ),
-#     })
-#     self.meta = dict(
-#       ylabel='conditioned response',
-#       ydetail='mean response per min',
-#       citation='Rescorla (2004)',
-#     )
-#     self.results = pd.melt(
-#       pd.DataFrame(columns=['group', 'trial', 'A'], data=[
-#         ['no delay', 1, 5],  # Acquisition
-#         ['no delay', 2, 8],
-#         ['no delay', 3, 10],
-#         ['no delay', 4, 11.5],
-#         ['no delay', 5, 13],
-#         ['no delay', 6, 13.2],
-#         ['no delay', 7, 14.5],
-#         ['no delay', 8, 14],
-#         ['no delay', 9, 14.2],
-#         ['no delay', 10, 14.2],
-#         ['no delay', 11, 14.6],
-#         ['no delay', 12, 15],
-#         ['no delay', 13, 8.5],  # Extinction
-#         ['no delay', 14, 3.8],
-#         ['no delay', 15, 3.2],
-#         ['no delay', 16, 1.4],
-#         ['no delay', 17, 0.2],  # Test
-#         ['no delay', 18, 0.1],
-#         ['no delay', 19, 0.2],
-#         ['no delay', 20, 0.8],
-#         ['delay', 1, 5],  # Acquisition
-#         ['delay', 2, 8],
-#         ['delay', 3, 10],
-#         ['delay', 4, 11.5],
-#         ['delay', 5, 13],
-#         ['delay', 6, 13.2],
-#         ['delay', 7, 14.5],
-#         ['delay', 8, 14],
-#         ['delay', 9, 14.2],
-#         ['delay', 10, 14.2],
-#         ['delay', 11, 14.6],
-#         ['delay', 12, 15],
-#         ['delay', 13, 10.6],  # Extinction
-#         ['delay', 14, 4],
-#         ['delay', 15, 2.4],
-#         ['delay', 16, 2],
-#         ['delay', 17, 6.2],  # Test
-#         ['delay', 18, 1.2],
-#         ['delay', 19, 2.2],
-#         ['delay', 20, 1.6],
-#       ]),
-#       id_vars=['group', 'trial']
-#     )
-#     self.plots = [
-#       lambda df, ax, **kwargs: cc.
-#       plot_lines(df, ax=ax, x='trial', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
-#     ]
+  Source: 10.6 - Figure 54
+  """
+  def __init__(self, n_acquisition=12, n_extinction=4, n_delay=12, n_test=4):
+    super().__init__({
+      'no delay':
+        cc.seq(
+          cc.seq(cc.trial('A+', ctx='K1'), repeat=n_acquisition, name='acquisition'),
+          cc.seq(cc.trial('A-', ctx='K1'), repeat=n_extinction, name='extinction'),
+          cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
+        ),
+      'delay':
+        cc.seq(
+          cc.seq(cc.trial('A+', ctx='K1'), repeat=n_acquisition, name='acquisition'),
+          cc.seq(cc.trial('-', ctx='K2'), repeat=n_delay, name='delay'),
+          cc.seq(cc.trial('A-', ctx='K1'), repeat=n_extinction, name='extinction'),
+          cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
+        ),
+    })
+    self.meta = dict(
+      ylabel='conditioned response',
+      ydetail='mean response per min',
+      citation='Rescorla (2004)',
+    )
+    self.results = pd.melt(
+      pd.DataFrame(
+        columns=['group', 'session', 'A'],
+        data=[
+          ['no delay', 1, 5],  # Acquisition
+          ['no delay', 2, 8],
+          ['no delay', 3, 10],
+          ['no delay', 4, 11.5],
+          ['no delay', 5, 13],
+          ['no delay', 6, 13.2],
+          ['no delay', 7, 14.5],
+          ['no delay', 8, 14],
+          ['no delay', 9, 14.2],
+          ['no delay', 10, 14.2],
+          ['no delay', 11, 14.6],
+          ['no delay', 12, 15],
+          ['no delay', 13, 8.5],  # Extinction
+          ['no delay', 14, 3.8],
+          ['no delay', 15, 3.2],
+          ['no delay', 16, 1.4],
+          ['no delay', 17, 0.2],  # Test
+          ['no delay', 18, 0.1],
+          ['no delay', 19, 0.2],
+          ['no delay', 20, 0.8],
+          ['delay', 1, 5],  # Acquisition
+          ['delay', 2, 8],
+          ['delay', 3, 10],
+          ['delay', 4, 11.5],
+          ['delay', 5, 13],
+          ['delay', 6, 13.2],
+          ['delay', 7, 14.5],
+          ['delay', 8, 14],
+          ['delay', 9, 14.2],
+          ['delay', 10, 14.2],
+          ['delay', 11, 14.6],
+          ['delay', 12, 15],
+          ['delay', 13, 10.6],  # Extinction
+          ['delay', 14, 4],
+          ['delay', 15, 2.4],
+          ['delay', 16, 2],
+          ['delay', 17, 6.2],  # Test
+          ['delay', 18, 1.2],
+          ['delay', 19, 2.2],
+          ['delay', 20, 1.6],
+        ]
+      ),
+      id_vars=['group', 'session']
+    )
+    self.plots = [
+      lambda df, ax, **kwargs: cc.
+      plot_lines(df, ax=ax, x='session', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
+    ]
 
-#   def summarize(self):
-#     return pd.melt(
-#       self.dataframe(
-#         lambda x: {
-#           'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
-#         } if x['phase'] != 'delay' else None,
-#         include_trial=True,
-#       ),
-#       id_vars=['group', 'trial']
-#     ).groupby(['group', 'trial', 'variable'], sort=False).mean().reset_index()
+  def summarize(self):
+    # Manually reindex trials to remove 'delay' phase trials.
+    dfs = {}
+    for phase in ('acquisition', 'extinction', 'test'):
+      dfs[phase] = cc.trials_to_sessions(
+        pd.melt(
+          self.dataframe(
+            lambda x: {
+              'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+            } if x['phase'] == phase else None,
+            include_trial=False,
+            include_trial_in_phase=True,
+          ),
+          id_vars=['group', 'trial in phase']
+        ).groupby(['group', 'trial in phase', 'variable'], sort=False).mean().reset_index(),
+        1,
+        trial_name='trial in phase',
+      )
+    dfs['extinction']['session'] += 12
+    dfs['test']['session'] += 16
+    return pd.concat(dfs.values()).reset_index(drop=True)
 
 
 @cc.registry.register

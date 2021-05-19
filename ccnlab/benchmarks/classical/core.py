@@ -217,15 +217,10 @@ class ClassicalConditioningExperiment:
     # self.data[group][trial][var][subject]
     data = []
     for g, group in self.stimuli.items():
-      phase_curr = self.phases[g][0] if len(group) > 0 else None
-      phase_start_i = 0
       phase_counts = defaultdict(int)
       for i, timesteps in enumerate(group):
         p = self.phases[g][i]
         phase_counts[p] += 1
-        if p != phase_curr:
-          phase_curr = p
-          phase_start_i = i
         # [timestep][var][subject] -> [var][timestep][subject] -> [timestep][subject]
         x = listdict_to_dictlist(self.data[g][i])[var]
         # [timestep][subject] -> [subject][timestep]
@@ -316,9 +311,9 @@ def suppression_ratio(stimuli, responses, during_cs, during_us=False):
   ctx = count_responses(stimuli, responses, during_cs=[], during_us=during_us)
   num = cs
   denom = cs + ctx
-  if denom == 0: return 0
   #     num = cs + 1
   #     denom = cs + ctx + 2
+  if denom == 0: return 0
   return float(num) / denom
 
 
@@ -339,7 +334,8 @@ def trials_to_sessions(
   df = df.rename(columns={trial_name: session_name})
 
   if keep_first: df = pd.concat((first, df))
-  return df.groupby([col for col in df.columns if col != value_name]).mean().reset_index()
+  return df.groupby([col for col in df.columns if col != value_name],
+                    sort=False).mean().reset_index()
 
 
 # ==================================================================================================
@@ -384,14 +380,22 @@ def plot_lines(
   ylabel='',
   yaxis=None,
   ax=None,
-  labelfontsize=12
+  label_fontsize=12,
+  legend_cols=4,
+  legend_pos=(0.5, -0.3),
 ):
   if ax is None: fig, ax = plt.subplots()
+  # palette = sns.color_palette('tab20c')
+  # level0 = df.groupby([group], sort=False).ngroup()
+  # level1 = df.groupby([split], sort=False).ngroup()
+  # df['hue'] = level0 * 4 + (level1 % 4)
+  # g = sns.lineplot(data=df, x=x, y=y, hue='hue', units=split, estimator=None, markers=True, palette='tab20c', ax=ax)
 
+  palette = sns.color_palette()
   g = sns.lineplot(data=df, x=x, y=y, hue=group, units=split, estimator=None, markers=True, ax=ax)
   sns.despine()
   if legend:
-    ax.legend(loc='lower center', ncol=4, bbox_to_anchor=(0.5, -0.3))
+    ax.legend(loc='lower center', ncol=legend_cols, bbox_to_anchor=legend_pos)
   elif ax.get_legend() is not None:
     ax.get_legend().remove()
   if yaxis is not None:
@@ -402,13 +406,13 @@ def plot_lines(
   if ylabel is not None: ax.set_ylabel(ylabel)
 
   if label is not None:
-    palette = sns.color_palette()
     groups = list(df[group].unique())
-    last = df[[x, y, group, split]].sort_values([x]).groupby([group, split]).last().reset_index()
-    sep = _pt_to_data_coord(ax, 0, labelfontsize)[1]
+    last = df.sort_values([x]).groupby([group, split]).last().reset_index()
+    sep = _pt_to_data_coord(ax, 0, label_fontsize)[1]
     labels = _line_labels(last, pos=y, sep=sep, delta=sep / 10)
     for i, row in labels.iterrows():
       color = palette[groups.index(row[group]) % len(palette)]
+      # color = palette[row['hue'] % len(palette)]
       ax.annotate(
         row[split], (row[x], row[y]),
         xytext=(4, 0),
@@ -417,7 +421,7 @@ def plot_lines(
         verticalalignment='center',
         color=color,
         linespacing=1,
-        fontsize=labelfontsize,
+        fontsize=label_fontsize,
         fontweight='bold'
       )
 
@@ -433,7 +437,7 @@ def plot_bars(
   yaxis=None,
   ax=None,
   barfrac=0.8,
-  labelfontsize=12,
+  label_fontsize=12,
   wrap=None,
 ):
   if ax is None: fig, ax = plt.subplots()
@@ -454,7 +458,7 @@ def plot_bars(
         bar,
         labels=df_split[label],
         padding=2,
-        fontsize=labelfontsize,
+        fontsize=label_fontsize,
         fontweight='bold',
         linespacing=1
       )
