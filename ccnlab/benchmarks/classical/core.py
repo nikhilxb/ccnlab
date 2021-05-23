@@ -179,15 +179,19 @@ class ClassicalConditioningExperiment:
     self.cs_space = tuple(sorted(cs_space))
     self.ctx_space = tuple(sorted(ctx_space))
 
-    self.data = {
-      group: [[defaultdict(list) for timestep in trial] for trial in stimuli]
-      for group, stimuli in self.stimuli.items()
-    }
+    self.data = {}
+    self.reset()
 
     self.name = self.__class__.__name__
     self.meta = {}
     self.results = None
     self.plots = []
+
+  def reset(self):
+    self.data = {
+      group: [[defaultdict(list) for timestep in trial] for trial in stimuli]
+      for group, stimuli in self.stimuli.items()
+    }
 
   def stimulus(self, group, trial, timestep, vector=False):
     stimuli = self.stimuli[group][trial][timestep]
