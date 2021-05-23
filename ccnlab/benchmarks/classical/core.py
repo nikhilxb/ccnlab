@@ -115,9 +115,6 @@ def build_stimuli(node):
   recurse(node, None)
   return stimuli, phases
 
-  import textwrap
-
-
 def repr_node(node):
   name = type(node).__name__
   if name == 'Trial':
@@ -436,20 +433,21 @@ def plot_bars(
   ylabel='',
   yaxis=None,
   ax=None,
-  barfrac=0.8,
+  barfrac=0.6,
   label_fontsize=12,
   wrap=None,
 ):
   if ax is None: fig, ax = plt.subplots()
   xs = df[x].unique()
   splits = df[split].unique() if split in df else [None]
-  xvals = pd.Series(np.arange(len(xs)), index=xs)
-  width = barfrac / len(splits)
+  xvals = pd.Series(np.arange(len(xs)), index=xs)  # Leftmost x-coord of bars.
+  width = min(barfrac, 0.9 / len(splits))  # Use preferred bar width unless not enough space.
   palette = sns.color_palette()
   colors = pd.Series([palette[x % len(palette)] for x in range(len(xs))], index=xs)
 
   for i, s in enumerate(splits):
     df_split = df[df[split] == s] if split in df else df
+    # Offset by i * width to space splits; offset by width / 2 because bar() uses middle x-coord.
     bar = ax.bar(
       xvals[df_split[x]] + i * width + width / 2, df_split[y], width, color=colors[df_split[x]]
     )
@@ -466,10 +464,12 @@ def plot_bars(
         labels[i].set_color(color)
 
   sns.despine()
-  ax.set_xticks(xvals + len(splits) * width / 2)
+  ax.set_xticks(xvals + len(splits) * width / 2)  # Middle x-coord of split group.
   ax.set_xticklabels([
     '\n'.join(textwrap.wrap(x, wrap, break_long_words=False)) if wrap is not None else x for x in xs
   ])
+  ax.margins(x=0)
+  ax.set_xlim(len(splits) * width / 2 - 1, len(xs) + len(splits) * width / 2)
   if yaxis is not None:
     ax.set_ylim(yaxis[0], yaxis[1])
     ax.set_yticks(np.arange(yaxis[0], yaxis[1] + yaxis[2], step=yaxis[2]))
