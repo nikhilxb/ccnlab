@@ -273,6 +273,27 @@ class ClassicalConditioningExperiment:
           if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
         plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind[i])
 
+  def multiplot(self, dfs, names, is_empirical, figsize=(6, 4), xlabel=True, ylabel=True, show_titles=True):
+    assert len(dfs) == len(names)
+    assert len(is_empirical) == len(names)
+    for plotfn in self.plots:
+      fig, axes = plt.subplots(1, len(names), figsize=(figsize[0] * 2, figsize[1]))
+      for i, df in enumerate(dfs):
+        kind = 'empirical' if is_empirical[i] else 'simulation'
+
+        xlab = ''
+        if xlabel:
+          xlab = self.meta.get('xlabel', None)
+          if kind[i] == 'empirical': xlab = self.meta.get('xdetail', xlab)
+        ylab = ''
+        if ylabel:
+          ylab = self.meta.get('ylabel', None)
+          if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
+
+        plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind)
+        if show_titles:
+            axes[i].set_title(names[i])
+
 
 # ==================================================================================================
 # Data Processing

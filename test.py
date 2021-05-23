@@ -28,47 +28,32 @@ import numpy as np
 
 import ccnlab.benchmarks.classical as classical
 import ccnlab.evaluation as evaluation
-import ccnlab.baselines.basic as models
+from ccnlab.baselines.basic import RandomModel, RW, Kalman, TD 
 
-exp = classical.registry('*acquisition*')[0]
-model = models.RandomModel()
-g, group = list(exp.stimuli.items())[0]
-i, trial = list(enumerate(group))[0]
-t, timestep = list(enumerate(trial))[0]
-cs, ctx, us = timestep
-res = model.act(cs, ctx, us, t)
-
-rw = models.RW(cs_dim=len(exp.cs_space), ctx_dim=len(exp.ctx_space))
-cs, ctx, us = exp.stimulus(g,i,t, vector=True)
-res = rw.act(cs, ctx, us, t)
-
-kalman = models.Kalman(cs_dim=len(exp.cs_space), ctx_dim=len(exp.ctx_space))
-cs, ctx, us = exp.stimulus(g,i,t, vector=True)
-res = kalman.act(cs, ctx, us, t)
-
-
-td = models.TD(cs_dim=len(exp.cs_space), ctx_dim=len(exp.ctx_space), num_timesteps=len(trial))
-cs, ctx, us = exp.stimulus(g,i,t, vector=True)
-res = td.act(cs, ctx, us, t)
-
-embed()
-    
 for exp in classical.registry('*acquisition*'):
     display_heading(exp.name, level=2)
     print(classical.repr_spec(exp.spec))
-    
-    for g, group in exp.stimuli.items():
-        for subject in range(1):
-            model = models.RandomModel()
-            for i, trial in enumerate(group):
-                for t, timestep in enumerate(trial):
-                    cs, ctx, us = timestep
-                    res = model.act(cs, ctx, us, t)
-                    exp.data[g][i][t]['response'].append(res)
 
-    results = exp.results
-    summary = exp.summarize()
-    print('correlation:', evaluation.correlation(results, summary))
-    display_side_by_side(results, summary)
-    exp.plot(show='both')
+    model_classes = [
+            lambda: RandomModel(),
+            lambda: RW(cs_dim=len(exp.cs_space), ctx_dim=len(exp.ctx_space)),
+            lambda: Kalman(cs_dim=len(exp.cs_space), ctx_dim=len(exp.ctx_space)),
+            lambda: TD(cs_dim=len(exp.cs_space), ctx_dim=len(exp.ctx_space), num_timesteps=len(trial))
+    ]
+    model_names = ['RandomModel', 'RW', 'Kalman', 'TD']
+
+    dfs = [exp.results]
+    for model_class in model_classes:
+    
+        for g, group in exp.stimuli.items():
+            for subject in range(1):
+                model = model_class()
+                for i, trial in enumerate(group):
+                    for t, timestep in enumerate(trial):
+                        cs, ctx, us = exp.stimulus(g,i,t, vector=True)
+                        res = model.act(cs, ctx, us, t)
+                        exp.data[g][i][t]['response'].append(res)
+        dfs.append(exp.summarize())
+
+    exp.multiplot(dfs, names=['empirical'] + model_names, is_empirical=[True] + [False] * len(model_names))
     plt.show()
