@@ -30,7 +30,12 @@ import ccnlab.benchmarks.classical as classical
 import ccnlab.evaluation as evaluation
 from ccnlab.baselines.basic import RandomModel, RW, Kalman, TD 
 
-for exp in classical.registry('*acquisition*'):
+exps = classical.registry('*Recovery*')[:5]
+model_names = ['RandomModel', 'RW', 'Kalman', 'TD']
+figsize=(4, 2)
+fig, axes = plt.subplots(len(exps), 1+len(model_names), figsize=(figsize[0] * len(exps), figsize[1] * (1+len(model_names))))
+
+for e, exp in enumerate(exps):
     display_heading(exp.name, level=2)
     print(classical.repr_spec(exp.spec))
 
@@ -40,11 +45,10 @@ for exp in classical.registry('*acquisition*'):
             lambda: Kalman(cs_dim=len(exp.cs_space), ctx_dim=len(exp.ctx_space)),
             lambda: TD(cs_dim=len(exp.cs_space), ctx_dim=len(exp.ctx_space), num_timesteps=len(trial))
     ]
-    model_names = ['RandomModel', 'RW', 'Kalman', 'TD']
 
     dfs = [exp.results]
     for model_class in model_classes:
-    
+        exp.reset()
         for g, group in exp.stimuli.items():
             for subject in range(1):
                 model = model_class()
@@ -55,5 +59,8 @@ for exp in classical.registry('*acquisition*'):
                         exp.data[g][i][t]['response'].append(res)
         dfs.append(exp.summarize())
 
-    exp.multiplot(dfs, names=['empirical'] + model_names, is_empirical=[True] + [False] * len(model_names))
-    plt.show()
+    #embed()
+    exp.multiplot(axes[e], dfs, names=['empirical'] + model_names, is_empirical=[True] + [False] * len(model_names), show_titles=(exp == exps[0]))
+
+fig.tight_layout(pad=0.2)
+plt.show()

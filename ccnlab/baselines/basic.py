@@ -44,7 +44,7 @@ class TD(Model):
         x = np.zeros((self.D * self.T,))
         x[t * self.D : (t + 1) * self.D] = cs + ctx  # complete serial compound representation
         self._update(x=x, r=us)
-        if t == self.T:
+        if t + 1 == self.T:
             self._update(x=np.zeros((self.D * self.T,)), r=0)  # perform update with the last seen input
         return self.w.dot(x)  # CR = value
 
