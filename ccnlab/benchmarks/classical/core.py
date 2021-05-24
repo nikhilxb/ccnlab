@@ -280,11 +280,11 @@ class ClassicalConditioningExperiment:
           if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
         plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind[i])
 
-  def multiplot(self, dfs, names, is_empirical, figsize=(6, 4), xlabel=True, ylabel=True, show_titles=True):
+  def multiplot(self, axes, dfs, names, is_empirical, figsize=(6, 4), xlabel=True, ylabel=False, show_titles=True):
     assert len(dfs) == len(names)
     assert len(is_empirical) == len(names)
     for plotfn in self.plots:
-      fig, axes = plt.subplots(1, len(names), figsize=(figsize[0] * 2, figsize[1]))
+      #fig, axes = plt.subplots(1, len(names), figsize=(figsize[0] * 2, figsize[1]))
       for i, df in enumerate(dfs):
         kind = 'empirical' if is_empirical[i] else 'simulation'
 
@@ -296,10 +296,13 @@ class ClassicalConditioningExperiment:
         if ylabel:
           ylab = self.meta.get('ylabel', None)
           if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
+        if i == 0:
+            ylab = '\n'.join(self.name.split('_'))
 
         plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind)
         if show_titles:
-            axes[i].set_title(names[i])
+            axes[i].set_title(names[i], y=1.0, pad=14, fontsize=20)
+        axes[i].get_yaxis().set_ticks([])
 
 
 # ==================================================================================================
@@ -406,7 +409,7 @@ def plot_lines(
   yaxis=None,
   ax=None,
   label_fontsize=12,
-  legend_cols=4,
+  legend_cols=1,
   legend_pos=(0.5, -0.3),
 ):
   if ax is None: fig, ax = plt.subplots()
@@ -420,7 +423,7 @@ def plot_lines(
   g = sns.lineplot(data=df, x=x, y=y, hue=group, units=split, estimator=None, markers=True, ax=ax)
   sns.despine()
   if legend:
-    ax.legend(loc='lower center', ncol=legend_cols, bbox_to_anchor=legend_pos)
+    ax.legend(loc='best', ncol=legend_cols)#, bbox_to_anchor=legend_pos)
   elif ax.get_legend() is not None:
     ax.get_legend().remove()
   if yaxis is not None:
@@ -494,7 +497,7 @@ def plot_bars(
   ax.set_xticks(xvals + len(splits) * width / 2)
   ax.set_xticklabels([
     '\n'.join(textwrap.wrap(x, wrap, break_long_words=False)) if wrap is not None else x for x in xs
-  ])
+  ], rotation=10)
   if yaxis is not None:
     ax.set_ylim(yaxis[0], yaxis[1])
     ax.set_yticks(np.arange(yaxis[0], yaxis[1] + yaxis[2], step=yaxis[2]))
