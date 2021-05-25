@@ -30,9 +30,9 @@ import ccnlab.benchmarks.classical as classical
 import ccnlab.evaluation as evaluation
 from ccnlab.baselines.basic import RandomModel, RW, Kalman, TD 
 
-exps = classical.registry('*')
+#exps = classical.registry('*')
 #exps = classical.registry('*Competition*')[:6]
-#exps = classical.registry('*ContinuousVsPartial*') + classical.registry('*Generalization*') + classical.registry('*HigherOrder*')
+exps = classical.registry('*ContinuousVsPartial*') + classical.registry('*Generalization*') + [classical.registry('*HigherOrder*')[0]] + classical.registry('*Overshadowing*')
 #embed()
 model_names = ['Rescorla-Wagner', 'Kalman filtering', 'Temporal difference\nlearning']
 figsize=(3, 3)
@@ -68,8 +68,8 @@ for e, exp in enumerate(exps):
     #embed()
     exp.multiplot(axes[e], dfs, names=['Empirical data'] + model_names, is_empirical=[True] + [False] * len(model_names), show_titles=(exp == exps[0]))
 
-fig.tight_layout(pad=0.2)
-#plt.show()
+fig.tight_layout(pad=0.0)
+plt.show()
 
 for e, exp in enumerate(exps):
     if any(np.isnan(correlations[e])):

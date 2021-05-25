@@ -461,7 +461,7 @@ def plot_bars(
   ylabel='',
   yaxis=None,
   ax=None,
-  barfrac=0.6,
+  barfrac=1.0,
   label_fontsize=12,
   wrap=None,
 ):

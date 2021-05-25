@@ -2,6 +2,8 @@ import numpy as np
 import random
 from ccnlab.baselines.core import Model
 
+
+
 class RW(Model):
     def __init__(self, cs_dim, ctx_dim, alpha=0.3):
         self.alpha = alpha  # learning rate
