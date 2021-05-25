@@ -30,6 +30,8 @@ import ccnlab.benchmarks.classical as classical
 import ccnlab.evaluation as evaluation
 from ccnlab.baselines.basic import RandomModel, RW, Kalman, TD 
 
+random.seed(0)
+
 #exps = classical.registry('*')
 #exps = classical.registry('*Competition*')[:6]
 exps = classical.registry('*ContinuousVsPartial*') + classical.registry('*Generalization*') + [classical.registry('*HigherOrder*')[0]] + classical.registry('*Overshadowing*')
@@ -38,8 +40,8 @@ model_names = ['Rescorla-Wagner', 'Kalman filtering', 'Temporal difference\nlear
 figsize=(3, 3)
 fig, axes = plt.subplots(len(exps), 1+len(model_names), figsize=(figsize[0] * len(exps), figsize[1] * (1+len(model_names))))
 
-correlations = np.zeros((len(exps), len(model_names)))
-print(correlations.shape)
+scores = np.zeros((len(exps), len(model_names)))
+is_ratio = np.zeros((len(exps), len(model_names)))
 for e, exp in enumerate(exps):
     display_heading(exp.name, level=2)
     print(classical.repr_spec(exp.spec))
@@ -63,7 +65,11 @@ for e, exp in enumerate(exps):
                         exp.data[g][i][t]['response'].append(res)
         summary = exp.summarize()
         dfs.append(summary)
-        correlations[e,m] = evaluation.correlation(exp.results, summary)
+        if len(list(exp.results.value)) == 2:
+            scores[e,m] = evaluation.ratio_of_ratios(exp.results, summary)
+            is_ratio[e,m] = 1
+        else:
+            scores[e,m] = evaluation.correlation(exp.results, summary)
 
     #embed()
     exp.multiplot(axes[e], dfs, names=['Empirical data'] + model_names, is_empirical=[True] + [False] * len(model_names), show_titles=(exp == exps[0]))
@@ -72,10 +78,12 @@ fig.tight_layout(pad=0.0)
 plt.show()
 
 for e, exp in enumerate(exps):
-    if any(np.isnan(correlations[e])):
-        continue
-    columns = ['{:.2f}'.format(c) for c in correlations[e]]
-    for i in [np.argmax(correlations[e])]:
+    columns = ['{:.2f}'.format(c) for c in scores[e]]
+    for i in [np.argmax(scores[e])]:
         columns[i] = '\\textbf{' + columns[i] + '}'
-    name = '\\makecell[tl]{'+ exp.name.replace('_', ': ') + '}'
+    name =  exp.name.replace('_', ': ')
+    if is_ratio[e,0]:
+        assert(all(is_ratio[e]))
+        name = name + '*'
+    name = '\\makecell[tl]{'+ name + '}'
     print(name + ' & ' + ' & '.join(columns) + '\\\\')

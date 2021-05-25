@@ -35,7 +35,9 @@ class BinaryResponseModel(Model):
 
     def act(self, cs, ctx, us, t):
         v = self._value(cs, ctx, us, t)
-        p = sigmoid(self.inverse_temperature * (v - self.offset))
+        #p = sigmoid(self.inverse_temperature * (v - self.offset))
+        p = v
+        p = min(1,max(0,p))
         response = float(random.random() < p)
         return response
 
