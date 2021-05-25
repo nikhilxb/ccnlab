@@ -35,9 +35,10 @@ random.seed(0)
 #exps = classical.registry('*')
 #exps = classical.registry('*Competition*')[:6]
 exps = classical.registry('*ContinuousVsPartial*') + classical.registry('*Generalization*') + [classical.registry('*HigherOrder*')[0]] + classical.registry('*Overshadowing*')
+exp_names = ['Acquisition', 'Extinction', 'Generalization', 'Generalization', 'Preconditioning', 'Competition', 'Recovery']
 #embed()
 model_names = ['Rescorla-Wagner', 'Kalman filtering', 'Temporal difference\nlearning']
-figsize=(3, 3)
+figsize=(2.3, 3.3)
 fig, axes = plt.subplots(len(exps), 1+len(model_names), figsize=(figsize[0] * len(exps), figsize[1] * (1+len(model_names))))
 
 scores = np.zeros((len(exps), len(model_names)))
@@ -72,9 +73,9 @@ for e, exp in enumerate(exps):
             scores[e,m] = evaluation.correlation(exp.results, summary)
 
     #embed()
-    exp.multiplot(axes[e], dfs, names=['Empirical data'] + model_names, is_empirical=[True] + [False] * len(model_names), show_titles=(exp == exps[0]))
+    exp.multiplot(axes[e], dfs, names=['Empirical data'] + model_names, is_empirical=[True] + [False] * len(model_names), show_titles=(exp == exps[0]), exp_name=exp_names[e])
 
-fig.tight_layout(pad=0.0)
+fig.tight_layout(pad=1.0)
 plt.show()
 
 for e, exp in enumerate(exps):

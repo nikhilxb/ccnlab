@@ -277,7 +277,7 @@ class ClassicalConditioningExperiment:
           if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
         plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind[i])
 
-  def multiplot(self, axes, dfs, names, is_empirical, figsize=(6, 4), xlabel=True, ylabel=False, show_titles=True):
+  def multiplot(self, axes, dfs, names, is_empirical, figsize=(6, 4), xlabel=True, ylabel=False, show_titles=True, exp_name=None):
     assert len(dfs) == len(names)
     assert len(is_empirical) == len(names)
     for plotfn in self.plots:
@@ -293,8 +293,9 @@ class ClassicalConditioningExperiment:
         if ylabel:
           ylab = self.meta.get('ylabel', None)
           if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
+        if exp_name is None: exp_name = exp.name
         if i == 0:
-            ylab = '\n'.join(self.name.split('_'))
+            ylab = '\n'.join(exp_name.split('_'))
 
         plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind)
         if show_titles:
@@ -497,7 +498,7 @@ def plot_bars(
     '\n'.join(textwrap.wrap(x, wrap, break_long_words=False)) if wrap is not None else x for x in xs
   ])
   ax.margins(x=0)
-  ax.set_xlim(len(splits) * width / 2 - 1, len(xs) + len(splits) * width / 2)
+  #ax.set_xlim(len(splits) * width / 2 - 1, len(xs) + len(splits) * width / 2)
   if yaxis is not None:
     ax.set_ylim(yaxis[0], yaxis[1])
     ax.set_yticks(np.arange(yaxis[0], yaxis[1] + yaxis[2], step=yaxis[2]))
