@@ -1,11 +1,12 @@
 import numpy as np
 import random
-from ccnlab.baselines.core import Model
+from ccnlab.baselines.core import Model, BinaryResponseModel
 
 
 
-class RW(Model):
+class RW(BinaryResponseModel):
     def __init__(self, cs_dim, ctx_dim, alpha=0.3):
+        super().__init__()
         self.alpha = alpha  # learning rate
         self.cs_dim = cs_dim
         self.ctx_dim = ctx_dim
@@ -15,7 +16,7 @@ class RW(Model):
     def reset(self):
         self.w = np.zeros((self.D,))
 
-    def act(self, cs, ctx, us, t):
+    def _value(self, cs, ctx, us, t):
         x=np.array(cs + ctx)
         self._update(x=x, r=us)
         return self.w.dot(x)  # CR = value
@@ -25,8 +26,9 @@ class RW(Model):
         self.w = self.w + self.alpha * rpe * x  # weight update
 
 
-class TD(Model):
+class TD(BinaryResponseModel):
     def __init__(self, cs_dim, ctx_dim, num_timesteps, alpha=0.3, gamma=0.98):
+        super().__init__()
         self.alpha = alpha  # learning rate
         self.gamma = gamma  # discount factor
         self.cs_dim = cs_dim
@@ -40,7 +42,7 @@ class TD(Model):
         self.last_x = np.zeros((self.D * self.T,))  # previous input
         self.last_r = 0  # previous reward
 
-    def act(self, cs, ctx, us, t):
+    def _value(self, cs, ctx, us, t):
         if t == 0:
             self.last_x = np.zeros((self.D * self.T,))  # no previous input at initial timestep
         x = np.zeros((self.D * self.T,))
@@ -58,8 +60,9 @@ class TD(Model):
         self.last_r = r
 
 
-class Kalman(Model):
+class Kalman(BinaryResponseModel):
     def __init__(self, cs_dim, ctx_dim, tau2=0.01, sigma_r2=1, sigma_w2=1):
+        super().__init__()
         self.cs_dim = cs_dim
         self.ctx_dim = ctx_dim
         self.D = self.cs_dim + self.ctx_dim  # stimulus dimensions: concatenate punctate and contextual cues
@@ -73,7 +76,7 @@ class Kalman(Model):
         self.w = np.zeros((self.D,))  # mean weights
         self.S = self.sigma_w2 * np.identity(self.D)  # weight covariance
 
-    def act(self, cs, ctx, us, t):
+    def _value(self, cs, ctx, us, t):
         x=np.array(cs + ctx)
         self._update(x=x, r=us)
         return self.w.dot(x)  # CR = value

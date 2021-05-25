@@ -54,7 +54,7 @@ for e, exp in enumerate(exps):
     for m, model_class in enumerate(model_classes):
         exp.reset()
         for g, group in exp.stimuli.items():
-            for subject in range(1):
+            for subject in range(20):
                 model = model_class()
                 for i, trial in enumerate(group):
                     for t, timestep in enumerate(trial):
