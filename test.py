@@ -30,13 +30,16 @@ import ccnlab.benchmarks.classical as classical
 import ccnlab.evaluation as evaluation
 from ccnlab.baselines.basic import RandomModel, RW, Kalman, TD 
 
+exps = classical.registry('*')
 #exps = classical.registry('*Competition*')[:6]
-exps = classical.registry('*ContinuousVsPartial*') + classical.registry('*Generalization*') + classical.registry('*HigherOrder*')
+#exps = classical.registry('*ContinuousVsPartial*') + classical.registry('*Generalization*') + classical.registry('*HigherOrder*')
 #embed()
 model_names = ['Rescorla-Wagner', 'Kalman filtering', 'Temporal difference\nlearning']
 figsize=(3, 3)
 fig, axes = plt.subplots(len(exps), 1+len(model_names), figsize=(figsize[0] * len(exps), figsize[1] * (1+len(model_names))))
 
+correlations = np.zeros((len(exps), len(model_names)))
+print(correlations.shape)
 for e, exp in enumerate(exps):
     display_heading(exp.name, level=2)
     print(classical.repr_spec(exp.spec))
@@ -48,7 +51,7 @@ for e, exp in enumerate(exps):
     ]
 
     dfs = [exp.results]
-    for model_class in model_classes:
+    for m, model_class in enumerate(model_classes):
         exp.reset()
         for g, group in exp.stimuli.items():
             for subject in range(1):
@@ -58,10 +61,21 @@ for e, exp in enumerate(exps):
                         cs, ctx, us = exp.stimulus(g,i,t, vector=True)
                         res = model.act(cs, ctx, us, t)
                         exp.data[g][i][t]['response'].append(res)
-        dfs.append(exp.summarize())
+        summary = exp.summarize()
+        dfs.append(summary)
+        correlations[e,m] = evaluation.correlation(exp.results, summary)
 
     #embed()
     exp.multiplot(axes[e], dfs, names=['Empirical data'] + model_names, is_empirical=[True] + [False] * len(model_names), show_titles=(exp == exps[0]))
 
 fig.tight_layout(pad=0.2)
-plt.show()
+#plt.show()
+
+for e, exp in enumerate(exps):
+    if any(np.isnan(correlations[e])):
+        continue
+    columns = ['{:.2f}'.format(c) for c in correlations[e]]
+    for i in [np.argmax(correlations[e])]:
+        columns[i] = '\\textbf{' + columns[i] + '}'
+    name = '\\makecell[tl]{'+ exp.name.replace('_', ': ') + '}'
+    print(name + ' & ' + ' & '.join(columns) + '\\\\')
