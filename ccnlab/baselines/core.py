@@ -29,16 +29,20 @@ class BinaryResponseModel(Model):
         and sampling from a Bernoulli
     '''
 
-    def __init__(self, inverse_temperature=1, offset=0.5):
+    def __init__(self, inverse_temperature=1, offset=0, eps=0):
         self.inverse_temperature = inverse_temperature
         self.offset = offset
+        self.eps = eps
 
     def act(self, cs, ctx, us, t):
         v = self._value(cs, ctx, us, t)
         #p = sigmoid(self.inverse_temperature * (v - self.offset))
         p = v
-        p = min(1,max(0,p))
-        response = float(random.random() < p)
+        p = min(1 - self.eps/2.,max(self.eps/2.,p))
+        response = float(random.random() < p) 
+        #ur = 1 if us else 0
+        #response = ur if us else cr
+        #print('                              ', us, v, p, response) 
         return response
 
     @abstractmethod

@@ -32,10 +32,10 @@ from ccnlab.baselines.basic import RandomModel, RW, Kalman, TD
 
 random.seed(0)
 
-#exps = classical.registry('*')
+exps = classical.registry('*')
 #exps = classical.registry('*Competition*')[:6]
-exps = classical.registry('*ContinuousVsPartial*') + classical.registry('*Generalization*') + [classical.registry('*HigherOrder*')[0]] + classical.registry('*Overshadowing*')
-exp_names = ['Acquisition', 'Extinction', 'Generalization', 'Generalization', 'Preconditioning', 'Competition', 'Recovery']
+#exps = classical.registry('*ContinuousVsPartial*') + classical.registry('*Generalization*') + [classical.registry('*HigherOrder*')[0]] + classical.registry('*Overshadowing*')
+#exp_names = ['Acquisition', 'Extinction', 'Generalization', 'Generalization', 'Preconditioning', 'Competition', 'Recovery']
 #embed()
 model_names = ['Rescorla-Wagner', 'Kalman filtering', 'Temporal difference\nlearning']
 figsize=(2.3, 3.3)
@@ -71,20 +71,30 @@ for e, exp in enumerate(exps):
             is_ratio[e,m] = 1
         else:
             scores[e,m] = evaluation.correlation(exp.results, summary)
+        if np.isnan(scores[e,m]):
+            embed()
+            pass
 
     #embed()
-    exp.multiplot(axes[e], dfs, names=['Empirical data'] + model_names, is_empirical=[True] + [False] * len(model_names), show_titles=(exp == exps[0]), exp_name=exp_names[e])
+    #exp.multiplot(axes[e], dfs, names=['Empirical data'] + model_names, is_empirical=[True] + [False] * len(model_names), show_titles=(exp == exps[0]), exp_name=exp_names[e])
 
 fig.tight_layout(pad=1.0)
-plt.show()
+#plt.show()
 
+last_name1 = ''
 for e, exp in enumerate(exps):
     columns = ['{:.2f}'.format(c) for c in scores[e]]
-    for i in [np.argmax(scores[e])]:
-        columns[i] = '\\textbf{' + columns[i] + '}'
-    name =  exp.name.replace('_', ': ')
+    #for m in [np.argmax(scores[e])]:
+    for m in range(len(scores[e])):
+        if scores[e,m] > 0.8:
+            columns[m] = '\\textbf{' + columns[m] + '}'
+
+    name1, name2 = exp.name.split('_')
+    name =  name1 + ' & \\texttt{' + name2 + '}' if name1 != last_name1 else ' & \\texttt{' + name2 + '}'
+    last_name1 = name1
     if is_ratio[e,0]:
         assert(all(is_ratio[e]))
         name = name + '*'
-    name = '\\makecell[tl]{'+ name + '}'
+    #name =  exp.name.replace('_', ': ')
+    #name = '\\makecell[tl]{'+ name + '}'
     print(name + ' & ' + ' & '.join(columns) + '\\\\')

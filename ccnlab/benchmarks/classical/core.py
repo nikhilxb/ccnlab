@@ -332,7 +332,7 @@ def conditioned_response(stimuli, responses, during_cs, during_us=False):
 
 
 def suppression_ratio(stimuli, responses, during_cs, during_us=False):
-  responses = [1 if r == 0 else 1 for r in responses]
+  responses = [1 if r == 0 else 0 for r in responses]
   cs = count_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
   ctx = count_responses(stimuli, responses, during_cs=[], during_us=during_us)
   num = cs

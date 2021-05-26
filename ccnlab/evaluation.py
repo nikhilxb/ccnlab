@@ -26,6 +26,4 @@ def ratio_of_ratios(df1, df2, value_name='value'):
     r2 = values2[1] / values1[0]
     if r1 > r2:
         r1, r2 = r2, r1
-    r1 += 0.01
-    r2 += 0.01
-    return r2 / r1
+    return r1 / r2

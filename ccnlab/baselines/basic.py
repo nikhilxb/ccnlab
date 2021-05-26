@@ -17,9 +17,11 @@ class RW(BinaryResponseModel):
         self.w = np.zeros((self.D,))
 
     def _value(self, cs, ctx, us, t):
-        x=np.array(cs + ctx)
+        x = np.array(cs + ctx)
+        v = self.w.dot(x) # value before update
         self._update(x=x, r=us)
-        return self.w.dot(x)  # CR = value
+        #print(x, self.w, self.w.dot(x))
+        return v
 
     def _update(self, x, r):
         rpe = r - self.w.dot(x)  # reward prediction error
@@ -47,10 +49,11 @@ class TD(BinaryResponseModel):
             self.last_x = np.zeros((self.D * self.T,))  # no previous input at initial timestep
         x = np.zeros((self.D * self.T,))
         x[t * self.D : (t + 1) * self.D] = cs + ctx  # complete serial compound representation
+        v = self.w.dot(x) # value before update
         self._update(x=x, r=us)
         if t + 1 == self.T:
             self._update(x=np.zeros((self.D * self.T,)), r=0)  # perform update with the last seen input
-        return self.w.dot(x)  # CR = value
+        return v
 
     def _update(self, x, r):
         # notice that we have to update for the previous input, because we don't have access to the next input
@@ -77,9 +80,10 @@ class Kalman(BinaryResponseModel):
         self.S = self.sigma_w2 * np.identity(self.D)  # weight covariance
 
     def _value(self, cs, ctx, us, t):
-        x=np.array(cs + ctx)
+        x = np.array(cs + ctx)
+        v = self.w.dot(x) # value before update
         self._update(x=x, r=us)
-        return self.w.dot(x)  # CR = value
+        return v  # CR = value
 
     def _update(self, x, r):
         rpe = r - self.w.dot(x)  # reward prediction error
