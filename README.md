@@ -1,6 +1,6 @@
 # CCNLab
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nikhilxb/ccnlab/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nikhilxb/ccnlab/blob/classical/LICENSE)
 
 **CCNLab** (short for Cognitive Computational Neuroscience Lab) is a benchmark for evaluating computational neuroscience models on empirical data. With classical conditioning as a case study, it includes a collection of seminal experiments in classical conditioning written in a domain-specific language, a common API for simulating different models on these experiments, and tools for visualizing and comparing the simulated data from the models with the empirical data.
 
