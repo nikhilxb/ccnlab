@@ -115,6 +115,7 @@ def build_stimuli(node):
   recurse(node, None)
   return stimuli, phases
 
+
 def repr_node(node):
   name = type(node).__name__
   if name == 'Trial':

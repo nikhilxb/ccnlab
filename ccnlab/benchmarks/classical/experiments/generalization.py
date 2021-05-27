@@ -64,8 +64,9 @@ class Generalization_NovelVsInhibitor(cc.ClassicalConditioningExperiment):
       ]
     )
     self.plots = [
-      lambda df, ax, **kwargs: cc.
-      plot_bars(df, ax=ax, x='group', split=None, xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'], wrap=11)
+      lambda df, ax, **kwargs: cc.plot_bars(
+        df, ax=ax, x='group', split=None, xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'], wrap=11
+      )
     ]
 
   def summarize(self):
