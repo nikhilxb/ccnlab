@@ -134,7 +134,7 @@ class Recovery_Overshadowing(cc.ClassicalConditioningExperiment):
 @cc.registry.register
 class Recovery_ExternalDisinhibition(cc.ClassicalConditioningExperiment):
   """Presenting a novel stimulus immediately before a previously extinguished CS might produce
-  nenewed responding.
+  renewed responding.
 
   Source: 10.5 - Figure 53
   """

@@ -5,7 +5,7 @@ import ccnlab.benchmarks.classical.core as cc
 @cc.registry.register
 class Transfer_Reacquisition(cc.ClassicalConditioningExperiment):
   """Following acquistion A+ and extinction A-, A+ pairings can result in faster or slower
-  reacquisition depending on the number of extinction trials
+  reacquisition depending on the number of extinction trials.
 
   Source: 9.2 - Figure 48
   """

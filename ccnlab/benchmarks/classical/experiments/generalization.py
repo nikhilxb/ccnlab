@@ -121,7 +121,7 @@ class Generalization_AddVsRemove(cc.ClassicalConditioningExperiment):
     self.meta = dict(
       ylabel='conditioned response',
       ydetail='conditioned response [%]',
-      citation='Wagner et al. (1967)',
+      citation='Brandon et al. (2000)',
     )
     self.results = pd.melt(
       pd.DataFrame(

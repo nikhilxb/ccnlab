@@ -343,7 +343,7 @@ class Competition_Superconditioning(cc.ClassicalConditioningExperiment):
     self.meta = dict(
       ylabel='suppression ratio',
       ydetail='suppression ratio',
-      citation='Dickinson et al. (1976)',
+      citation='Rescorla (1971)',
     )
     self.results = pd.melt(
       pd.DataFrame(

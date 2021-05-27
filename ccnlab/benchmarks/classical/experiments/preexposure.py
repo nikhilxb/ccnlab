@@ -36,7 +36,7 @@ class PreExposure_LatentInhibitionVsPerceptualLearning(cc.ClassicalConditioningE
     self.meta = dict(
       ylabel='conditioned response',
       ydetail='1 - mean errors',
-      citation='Lubow, Alek & Rifkin (1976)',
+      citation='Lubow, Rifkin, & Alek (1976)',
     )
     self.results = pd.melt(
       pd.DataFrame(
