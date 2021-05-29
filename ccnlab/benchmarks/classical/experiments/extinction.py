@@ -41,7 +41,7 @@ class Extinction_ContinuousVsPartial(cc.ClassicalConditioningExperiment):
       ydetail='suppression [(ctx-cs)/cs]',
       citation='Wagner et al. (1967)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'session', 'A'],
         data=[
@@ -64,12 +64,12 @@ class Extinction_ContinuousVsPartial(cc.ClassicalConditioningExperiment):
       plot_lines(df, ax=ax, x='session', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return cc.trials_to_sessions(
       pd.melt(
         self.dataframe(
           lambda x: {
-            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+            'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
           } if x['phase'] == 'extinction' else None,
           include_trial=False,
           include_trial_in_phase=True,

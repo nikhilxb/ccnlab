@@ -32,7 +32,7 @@ class Acquisition_ContinuousVsPartial(cc.ClassicalConditioningExperiment):
       ydetail='time to error [s]',
       citation='Wagner et al. (1967)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'session', 'A'],
         data=[
@@ -55,12 +55,12 @@ class Acquisition_ContinuousVsPartial(cc.ClassicalConditioningExperiment):
       plot_lines(df, ax=ax, x='session', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return cc.trials_to_sessions(
       pd.melt(
-        self
-        .dataframe(lambda x: {
-          'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+        self.
+        dataframe(lambda x: {
+          'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
         }),
         id_vars=['group', 'trial']
       ).groupby(['group', 'trial', 'variable'], sort=False).mean().reset_index(),

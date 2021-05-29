@@ -22,7 +22,7 @@ class Discrimination_ReinforcedVsNonreinforced(cc.ClassicalConditioningExperimen
       ydetail='conditioned response [%]',
       citation='Campolattaro et al. (2008)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'session', 'A', 'B'],
         data=[
@@ -46,14 +46,14 @@ class Discrimination_ReinforcedVsNonreinforced(cc.ClassicalConditioningExperimen
       )
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return cc.trials_to_sessions(
       pd.melt(
         self.dataframe(
           lambda x: {
-            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+            'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
           } if x['phase'] == 'train-A' else {
-            'B': cc.conditioned_response(x['timesteps'], x['response'], ['B']),
+            'B': cc.conditioned_response(x['timesteps'], x['responses'], ['B']),
           } if x['phase'] == 'train-B' else None,
           include_trial=False,
           include_trial_in_phase=True,
@@ -87,7 +87,7 @@ class Discrimination_PositivePatterning(cc.ClassicalConditioningExperiment):
       ydetail='conditioned response [%]',
       citation='Bellingham et al. (1985)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'session', 'A', 'B', 'AB'],
         data=[
@@ -125,16 +125,16 @@ class Discrimination_PositivePatterning(cc.ClassicalConditioningExperiment):
       )
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return cc.trials_to_sessions(
       pd.melt(
         self.dataframe(
           lambda x: {
-            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+            'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
           } if x['phase'] == 'train-A' else {
-            'B': cc.conditioned_response(x['timesteps'], x['response'], ['B']),
+            'B': cc.conditioned_response(x['timesteps'], x['responses'], ['B']),
           } if x['phase'] == 'train-B' else {
-            'AB': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'B']),
+            'AB': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'B']),
           } if x['phase'] == 'train-AB' else None,
           include_trial=False,
           include_trial_in_phase=True,
@@ -168,7 +168,7 @@ class Discrimination_NegativePatterning(cc.ClassicalConditioningExperiment):
       ydetail='conditioned response [%]',
       citation='Bellingham et al. (1985)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'session', 'A', 'B', 'AB'],
         data=[
@@ -206,16 +206,16 @@ class Discrimination_NegativePatterning(cc.ClassicalConditioningExperiment):
       )
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return cc.trials_to_sessions(
       pd.melt(
         self.dataframe(
           lambda x: {
-            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+            'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
           } if x['phase'] == 'train-A' else {
-            'B': cc.conditioned_response(x['timesteps'], x['response'], ['B']),
+            'B': cc.conditioned_response(x['timesteps'], x['responses'], ['B']),
           } if x['phase'] == 'train-B' else {
-            'AB': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'B']),
+            'AB': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'B']),
           } if x['phase'] == 'train-AB' else None,
           include_trial=False,
           include_trial_in_phase=True,
@@ -255,7 +255,7 @@ class Discrimination_NegativePatterningCommonCue(cc.ClassicalConditioningExperim
       ydetail='conditioned response [#/min]',
       citation='Redhead & Pearce (1998)',
     )
-    self.results = pd.concat([
+    self.empirical_results = pd.concat([
       pd.melt(
         pd.DataFrame(
           columns=['group', 'session', 'A', 'B', 'AB'],
@@ -294,22 +294,22 @@ class Discrimination_NegativePatterningCommonCue(cc.ClassicalConditioningExperim
       )
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return cc.trials_to_sessions(
       pd.melt(
         self.dataframe(
           lambda x: {
-            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+            'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
           } if x['phase'] == 'train-A' else {
-            'B': cc.conditioned_response(x['timesteps'], x['response'], ['B']),
+            'B': cc.conditioned_response(x['timesteps'], x['responses'], ['B']),
           } if x['phase'] == 'train-B' else {
-            'AB': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'B']),
+            'AB': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'B']),
           } if x['phase'] == 'train-AB' else {
-            'AC': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'C']),
+            'AC': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'C']),
           } if x['phase'] == 'train-AC' else {
-            'BC': cc.conditioned_response(x['timesteps'], x['response'], ['B', 'C']),
+            'BC': cc.conditioned_response(x['timesteps'], x['responses'], ['B', 'C']),
           } if x['phase'] == 'train-BC' else {
-            'ABC': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'B', 'C']),
+            'ABC': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'B', 'C']),
           } if x['phase'] == 'train-ABC' else None,
           include_trial=False,
           include_trial_in_phase=True,
@@ -343,7 +343,7 @@ class Discrimination_NegativePatterningThreeCues(cc.ClassicalConditioningExperim
       ydetail='conditioned response [#/min]',
       citation='Redhead & Pearce (1995)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'session', 'A', 'BC', 'ABC'],
         data=[
@@ -367,16 +367,16 @@ class Discrimination_NegativePatterningThreeCues(cc.ClassicalConditioningExperim
       )
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return cc.trials_to_sessions(
       pd.melt(
         self.dataframe(
           lambda x: {
-            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+            'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
           } if x['phase'] == 'train-A' else {
-            'BC': cc.conditioned_response(x['timesteps'], x['response'], ['B', 'C']),
+            'BC': cc.conditioned_response(x['timesteps'], x['responses'], ['B', 'C']),
           } if x['phase'] == 'train-BC' else {
-            'ABC': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'B', 'C']),
+            'ABC': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'B', 'C']),
           } if x['phase'] == 'train-ABC' else None,
           include_trial=False,
           include_trial_in_phase=True,
@@ -421,7 +421,7 @@ class Discrimination_Biconditional(cc.ClassicalConditioningExperiment):
       ydetail='conditioned response [%]',
       citation='Saavedra (1975)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'session', '+', '\u2212'],  # Use "minus" character for prettier plot.
         data=[
@@ -450,20 +450,20 @@ class Discrimination_Biconditional(cc.ClassicalConditioningExperiment):
       )
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return cc.trials_to_sessions(
       pd.melt(
         self.dataframe(
           lambda x: {
-            '+': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'C']),
+            '+': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'C']),
           } if x['phase'] == 'train-AC' else {
             ('+' if x['group'] == 'component' else '\u2212'):
-              cc.conditioned_response(x['timesteps'], x['response'], ['A', 'D']),
+              cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'D']),
           } if x['phase'] == 'train-AD' else {
-            '\u2212': cc.conditioned_response(x['timesteps'], x['response'], ['B', 'C']),
+            '\u2212': cc.conditioned_response(x['timesteps'], x['responses'], ['B', 'C']),
           } if x['phase'] == 'train-BC' else {
             ('\u2212' if x['group'] == 'component' else '+'):
-              cc.conditioned_response(x['timesteps'], x['response'], ['B', 'D']),
+              cc.conditioned_response(x['timesteps'], x['responses'], ['B', 'D']),
           } if x['phase'] == 'train-BD' else None,
           include_trial=False,
           include_trial_in_phase=True,
@@ -503,7 +503,7 @@ class Discrimination_FeaturePositive(cc.ClassicalConditioningExperiment):
       ydetail='conditioned response [%]',
       citation='Ross & Holland (1981)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'session', 'BA', 'A'],
         data=[
@@ -535,15 +535,15 @@ class Discrimination_FeaturePositive(cc.ClassicalConditioningExperiment):
       plot_lines(df, ax=ax, x='session', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return cc.trials_to_sessions(
       pd.melt(
         self.dataframe(
           lambda x: {
-            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+            'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
           } if x['phase'] == 'train-A' else {
             # Only measure during A (i.e. tone in original experiment).
-            'BA': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+            'BA': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
           } if x['phase'] == 'train-BA' else None,
           include_trial=False,
           include_trial_in_phase=True,
@@ -590,7 +590,7 @@ class Discrimination_FeatureNegative(cc.ClassicalConditioningExperiment):
       ydetail='suppression ratio',
       citation='Holland (1984)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'session', 'BA', 'A'],
         data=[
@@ -618,15 +618,15 @@ class Discrimination_FeatureNegative(cc.ClassicalConditioningExperiment):
       plot_lines(df, ax=ax, x='session', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return cc.trials_to_sessions(
       pd.melt(
         self.dataframe(
           lambda x: {
-            'A': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+            'A': cc.suppression_ratio(x['timesteps'], x['responses'], ['A']),
           } if x['phase'] == 'train-A' else {
             # Only measure during A (i.e. noise in original experiment).
-            'BA': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+            'BA': cc.suppression_ratio(x['timesteps'], x['responses'], ['A']),
           } if x['phase'] == 'train-BA' else None,
           include_trial=False,
           include_trial_in_phase=True,

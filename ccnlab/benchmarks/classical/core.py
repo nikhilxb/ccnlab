@@ -69,7 +69,7 @@ def sample(prob):
 # Syntax Tree Building
 
 
-def build_trial(node):
+def _build_trial(node):
   cs, ctx, us = node
   length = 0
 
@@ -99,7 +99,7 @@ def build_stimuli(node):
   def recurse(node, phase):
     name = type(node).__name__
     if name == 'Trial':
-      trial = build_trial(node)
+      trial = _build_trial(node)
       stimuli.append(trial)
       phases.append(phase)
     if name == 'Sample':
@@ -116,7 +116,7 @@ def build_stimuli(node):
   return stimuli, phases
 
 
-def repr_node(node):
+def _repr_node(node):
   name = type(node).__name__
   if name == 'Trial':
     stimuli = []
@@ -136,7 +136,7 @@ def repr_node(node):
     return prefix
   if name == 'Sample':
     items = [
-      '(prob={}) {{\n{}\n}}'.format(p, textwrap.indent(repr_node(child), '  '))
+      '(prob={}) {{\n{}\n}}'.format(p, textwrap.indent(_repr_node(child), '  '))
       for child, p in node.prob.items()
     ]
     return '\n'.join(items)
@@ -144,14 +144,14 @@ def repr_node(node):
     prefix = ''
     if node.name is not None: prefix += '{} '.format(node.name)
     if node.repeat > 1: prefix += '(repeat={}) '.format(node.repeat)
-    inner = '\n'.join(textwrap.indent(repr_node(child), '  ') for child in node.children)
+    inner = '\n'.join(textwrap.indent(_repr_node(child), '  ') for child in node.children)
     prefix += '{{\n{}\n}}'.format(inner)
     return prefix
 
 
-def repr_spec(spec):
+def _repr_spec(spec):
   return '\n'.join(
-    '{}:\n{}'.format(group, textwrap.indent(repr_node(tree), '  ')) for group, tree in spec.items()
+    '{}:\n{}'.format(group, textwrap.indent(_repr_node(tree), '  ')) for group, tree in spec.items()
   )
 
 
@@ -162,8 +162,12 @@ registry = SearchableRegistry()
 
 
 class ClassicalConditioningExperiment:
-  def __init__(self, spec):
+  """An `ClassicalConditioningExperiment` is an environment that simulates the schedule of stimuli presented in a real-world classical conditioning experiment drawn from peer-reviewed academic research, and facilitates the comparison of simulated results with empirical results. Developers
+  should subclass this to implement a particular experiment.
+  """
+  def __init__(self, spec, response_key='response'):
     self.spec = spec
+    self.response_key = response_key
     self.stimuli = {}
     self.phases = {}
     for group, node in spec.items():
@@ -187,10 +191,13 @@ class ClassicalConditioningExperiment:
 
     self.name = self.__class__.__name__
     self.meta = {}
-    self.results = None
+    self.empirical_results = None
     self.plots = []
 
   def stimulus(self, group, trial, timestep, vector=False):
+    """Return the stimulus (tuple (cs, ctx, us))) of a timestep within a trial within a group.
+    By default, `cs` is a list of (id str, magnitude float) pairs, `ctx` is an id str, and `us` is
+    a magnitude float. Optionally, `cs` and `ctx` can instead be returned as a one-hot vector."""
     stimuli = self.stimuli[group][trial][timestep]
     if not vector: return stimuli
     cs, ctx, us = stimuli
@@ -199,17 +206,19 @@ class ClassicalConditioningExperiment:
     return cs_vec, ctx_vec, us
 
   def phase(self, group, trial):
+    """Return the phase (str or None) of a trial within a group."""
     return self.phases[group][trial]
 
   def dataframe(
     self,
     fn,
-    var='response',
     include_group=True,
     include_trial=True,
     include_phase=False,
     include_trial_in_phase=False
   ):
+    """Apply the given processing function on the stimuli and responses to create rows in a
+    dataframe."""
     # fn: (args) => { 'col': value, ... }
     # self.stimuli[group][trial]
     # self.data[group][trial][var][subject]
@@ -220,12 +229,12 @@ class ClassicalConditioningExperiment:
         p = self.phases[g][i]
         phase_counts[p] += 1
         # [timestep][var][subject] -> [var][timestep][subject] -> [timestep][subject]
-        x = listdict_to_dictlist(self.data[g][i])[var]
+        x = listdict_to_dictlist(self.data[g][i])[self.response_key]
         # [timestep][subject] -> [subject][timestep]
         x = zip(*x)
         for values in x:
           kwargs = {
-            var: values,
+            'responses': values,
             'timesteps': timesteps,
             'group': g,
             'trial': i + 1,
@@ -242,24 +251,26 @@ class ClassicalConditioningExperiment:
             data.append({**info_cols, **custom_cols})
     return pd.DataFrame(data)
 
-  def summarize(self):
+  def simulated_results(self):
+    """Transform collected data into format identical to `self.empirical_results`."""
     raise NotImplementedError
 
   def plot(self, show='both', figsize=(6, 4), axes=None, xlabel=True, ylabel=True):
+    """Plot empirical and/or simulated results."""
     # show: 'empirical' | 'simulation' | 'both'
     for plotfn in self.plots:
       if show == 'empirical':
-        dfs = [self.results]
+        dfs = [self.empirical_results]
         fig, ax = plt.subplots(figsize=figsize)
         axes = [ax]
         kind = ['empirical']
       elif show == 'simulation':
-        dfs = [self.summarize()]
+        dfs = [self.simulated_results()]
         fig, ax = plt.subplots(figsize=figsize)
         axes = [ax]
         kind = ['simulation']
       else:
-        dfs = [self.results, self.summarize()]
+        dfs = [self.empirical_results, self.simulated_results()]
         fig, axes = plt.subplots(1, 2, figsize=(figsize[0] * 2, figsize[1]))
         kind = ['empirical', 'simulation']
 
@@ -274,19 +285,25 @@ class ClassicalConditioningExperiment:
           if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
         plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind[i])
 
+  def schedule(self):
+    return _repr_spec(self.spec)
+
 
 # ==================================================================================================
 # Data Processing
 
 
-def count_responses(stimuli, responses, during_cs=None, during_ctx=None, during_us=None):
+def sum_responses(stimuli, responses, during_cs=None, during_ctx=None, during_us=None):
+  """Calculate sum of responses for a single trial, optionally only counting timesteps occuring
+  during the specified `during_cs`, `during_ctx`, or `during_us` values. For `during_cs`, the `cs` must match all provided vlaue (will not count if is a subset)."""
+
   # (cs, ctx, us) = stimuli[timestep]
   # response = responses[timestep]
   def include(stimulus):
     cs, ctx, us = stimulus
     result = True
     if during_cs is not None:
-      result &= len(cs) == len(during_cs) and all(stim in during_cs for stim, mag in cs)
+      result &= len(cs) == len(during_cs) and all(stim in during_cs and mag > 0 for stim, mag in cs)
     if during_ctx is not None:
       result &= ctx == during_ctx
     if during_us is not None:
@@ -297,20 +314,25 @@ def count_responses(stimuli, responses, during_cs=None, during_ctx=None, during_
 
 
 def conditioned_response(stimuli, responses, during_cs, during_us=False):
-  num = count_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
-  denom = count_responses(stimuli, [1] * len(responses), during_cs=during_cs, during_us=during_us)
+  """Calculates conditioned response for a single trial."""
+  assert len(stimuli) == len(responses)
+  assert all(0 <= r <= 1 for r in responses)
+  num = sum_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
+  denom = sum_responses(stimuli, [1] * len(responses), during_cs=during_cs, during_us=during_us)
   if denom == 0: return 0
   return float(num) / denom
 
 
 def suppression_ratio(stimuli, responses, during_cs, during_us=False):
-  responses = [1 if r == 0 else 0 for r in responses]
-  cs = count_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
-  ctx = count_responses(stimuli, responses, during_cs=[], during_us=during_us)
+  """Calculates suppression ratio for a single trial."""
+  assert len(stimuli) == len(responses)
+  assert all(0 <= r <= 1 for r in responses)
+  # Invert responses to mimic aversive behavior observations (see paper fo details).
+  responses = [1 - r for r in responses]
+  cs = sum_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
+  ctx = sum_responses(stimuli, responses, during_cs=[], during_us=during_us)
   num = cs
   denom = cs + ctx
-  #     num = cs + 1
-  #     denom = cs + ctx + 2
   if denom == 0: return 0
   return float(num) / denom
 
@@ -323,6 +345,8 @@ def trials_to_sessions(
   session_name='session',
   value_name='value',
 ):
+  """Aggregate consecutive spans of trials into sessions through averaging. Spans have length
+  `trials_per_session`. Optionally, the first trial can be included (via `keep_first`)."""
   first = df[df[trial_name] == 1].copy()
   first[trial_name] = 0
   first = first.rename(columns={trial_name: session_name})
@@ -341,6 +365,7 @@ def trials_to_sessions(
 
 
 def _line_labels(last, pos='value', sep=1, delta=0.1, max_iters=20):
+  """Calculate y-position of line labels, minimizing label overlap."""
   labels = last.copy()
   for _ in range(max_iters):
     changed = False
@@ -362,6 +387,7 @@ def _line_labels(last, pos='value', sep=1, delta=0.1, max_iters=20):
 
 
 def _pt_to_data_coord(ax, x, y):
+  """Convert (x, y) value in points into (x', y') value in data coordinates on axes `ax`."""
   t = ax.transData.inverted()
   return t.transform((x, y)) - t.transform((0, 0))
 
@@ -382,13 +408,10 @@ def plot_lines(
   legend_cols=4,
   legend_pos=(0.5, -0.3),
 ):
+  """Plot line graph, coloring by `group` and splitting into multiple lines within a group using 
+  `split`. Expects `df` in long-form.
+  """
   if ax is None: fig, ax = plt.subplots()
-  # palette = sns.color_palette('tab20c')
-  # level0 = df.groupby([group], sort=False).ngroup()
-  # level1 = df.groupby([split], sort=False).ngroup()
-  # df['hue'] = level0 * 4 + (level1 % 4)
-  # g = sns.lineplot(data=df, x=x, y=y, hue='hue', units=split, estimator=None, markers=True, palette='tab20c', ax=ax)
-
   palette = sns.color_palette()
   g = sns.lineplot(data=df, x=x, y=y, hue=group, units=split, estimator=None, markers=True, ax=ax)
   sns.despine()
@@ -410,7 +433,6 @@ def plot_lines(
     labels = _line_labels(last, pos=y, sep=sep, delta=sep / 10)
     for i, row in labels.iterrows():
       color = palette[groups.index(row[group]) % len(palette)]
-      # color = palette[row['hue'] % len(palette)]
       ax.annotate(
         row[split], (row[x], row[y]),
         xytext=(4, 0),
@@ -438,6 +460,9 @@ def plot_bars(
   label_fontsize=12,
   wrap=None,
 ):
+  """Plot bar graph, coloring by `group` and splitting into multiple bars within a group using 
+  `split`. Expects `df` in long-form.
+  """
   if ax is None: fig, ax = plt.subplots()
   xs = df[x].unique()
   splits = df[split].unique() if split in df else [None]

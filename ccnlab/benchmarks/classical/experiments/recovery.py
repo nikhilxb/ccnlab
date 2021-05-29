@@ -42,7 +42,7 @@ class Recovery_LatentInhibition(cc.ClassicalConditioningExperiment):
       ydetail='mean latency [log s]',
       citation='Grahame et al. (1994)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'A'],
         data=[
@@ -59,11 +59,11 @@ class Recovery_LatentInhibition(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'], wrap=9)
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),
@@ -103,7 +103,7 @@ class Recovery_Overshadowing(cc.ClassicalConditioningExperiment):
       ydetail='mean latency [log s]',
       citation='Matzel et al. (1985)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'A'],
         data=[
@@ -119,11 +119,11 @@ class Recovery_Overshadowing(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'], wrap=13)
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),
@@ -157,7 +157,7 @@ class Recovery_ExternalDisinhibition(cc.ClassicalConditioningExperiment):
       ydetail='median approach-withdrawal ratio',
       citation='Bottjer (1982)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'extinction', 'test 1', 'test 2'], data=[
           ['main', 0.5, 0.85, 0.78],
@@ -170,15 +170,15 @@ class Recovery_ExternalDisinhibition(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'], wrap=13)
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'extinction': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          'extinction': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'extinction' else {
-          'test 1': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          'test 1': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test-1' else {
-          'test 2': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          'test 2': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test-2' else None,
         include_trial=False,
       ),
@@ -214,7 +214,7 @@ class Recovery_SpontaneousRecovery(cc.ClassicalConditioningExperiment):
       ydetail='conditioned response [#/min]',
       citation='Rescorla (2004)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'session', 'A'],
         data=[
@@ -267,7 +267,7 @@ class Recovery_SpontaneousRecovery(cc.ClassicalConditioningExperiment):
       plot_lines(df, ax=ax, x='session', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     # Manually reindex trials to remove 'delay' phase trials.
     dfs = {}
     for phase in ('acquisition', 'extinction', 'test'):
@@ -275,7 +275,7 @@ class Recovery_SpontaneousRecovery(cc.ClassicalConditioningExperiment):
         pd.melt(
           self.dataframe(
             lambda x: {
-              'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+              'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
             } if x['phase'] == phase else None,
             include_trial=False,
             include_trial_in_phase=True,
@@ -316,7 +316,7 @@ class Recovery_Renewal(cc.ClassicalConditioningExperiment):
       ydetail='conditioned response [%]',
       citation='Harris et al. (2000)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(columns=['group', 'A'], data=[
         ['same context', 27],
         ['novel context', 55],
@@ -328,11 +328,11 @@ class Recovery_Renewal(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),
@@ -370,7 +370,7 @@ class Recovery_Reinstatement(cc.ClassicalConditioningExperiment):
       ydetail='suppression ratio',
       citation='Rescorla & Heth (1975)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'extinction', 'test 1', 'test 2'],
         data=[
@@ -385,15 +385,15 @@ class Recovery_Reinstatement(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'extinction': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+          'extinction': cc.suppression_ratio(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'extinction' else {
-          'test 1': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+          'test 1': cc.suppression_ratio(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test-1' else {
-          'test 2': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+          'test 2': cc.suppression_ratio(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test-2' else None,
         include_trial=False,
       ),

@@ -55,7 +55,7 @@ class Generalization_NovelVsInhibitor(cc.ClassicalConditioningExperiment):
       ydetail='ratings',
       citation='Kutlu & Schmajuk (2012)',
     )
-    self.results = pd.DataFrame(
+    self.empirical_results = pd.DataFrame(
       columns=['group', 'variable', 'value'],
       data=[
         ['control', 'A', 9],
@@ -69,18 +69,18 @@ class Generalization_NovelVsInhibitor(cc.ClassicalConditioningExperiment):
       )
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
           **({
-            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A'])
+            'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A'])
           } if x['group'] == 'control' else {}),
           **({
-            'AC': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'C'])
+            'AC': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'C'])
           } if x['group'] == 'external inhibition' else {}),
           **({
-            'AX': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'X'])
+            'AX': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'X'])
           } if x['group'] == 'conditioned inhibition' else {}),
         } if x['phase'] == 'test' else None,
         include_trial=False,
@@ -124,7 +124,7 @@ class Generalization_AddVsRemove(cc.ClassicalConditioningExperiment):
       ydetail='conditioned response [%]',
       citation='Brandon et al. (2000)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'A', 'AB', 'ABC'],
         data=[
@@ -140,15 +140,15 @@ class Generalization_AddVsRemove(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test-A' else {
-          'AB': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'B']),
+          'AB': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'B']),
         } if x['phase'] == 'test-AB' else {
-          'ABC': cc.conditioned_response(x['timesteps'], x['response'], ['A', 'B', 'C']),
+          'ABC': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'B', 'C']),
         } if x['phase'] == 'test-ABC' else None,
         include_trial=False
       ),

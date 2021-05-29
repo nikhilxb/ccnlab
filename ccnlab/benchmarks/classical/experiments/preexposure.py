@@ -38,7 +38,7 @@ class PreExposure_LatentInhibitionVsPerceptualLearning(cc.ClassicalConditioningE
       ydetail='1 - mean errors',
       citation='Lubow, Rifkin, & Alek (1976)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'A'],
         data=[
@@ -55,11 +55,11 @@ class PreExposure_LatentInhibitionVsPerceptualLearning(cc.ClassicalConditioningE
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'], wrap=14)
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),
@@ -88,7 +88,7 @@ class PreExposure_USPreExposure(cc.ClassicalConditioningExperiment):
       ydetail='suppression ratio',
       citation='Kamin (1961)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(columns=['group', 'A'], data=[
         ['no preexpose', 0.12],
         ['preexpose', 0.23],
@@ -100,11 +100,11 @@ class PreExposure_USPreExposure(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'], wrap=14)
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+          'A': cc.suppression_ratio(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),

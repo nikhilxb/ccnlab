@@ -30,7 +30,7 @@ class Inhibition_InhibitorExtinction(cc.ClassicalConditioningExperiment):
       ydetail='suppression ratio',
       citation='Zimmer-Hart & Rescorla (1974)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'A', 'AX'], data=[
           ['control', 0.05, 0.23],
@@ -44,13 +44,13 @@ class Inhibition_InhibitorExtinction(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+          'A': cc.suppression_ratio(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test-A' else {
-          'AX': cc.suppression_ratio(x['timesteps'], x['response'], ['A', 'X']),
+          'AX': cc.suppression_ratio(x['timesteps'], x['responses'], ['A', 'X']),
         } if x['phase'] == 'test-AX' else None,
         include_trial=False,
       ),

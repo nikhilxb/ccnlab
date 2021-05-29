@@ -46,7 +46,7 @@ class Competition_RelativeValidity(cc.ClassicalConditioningExperiment):
       ydetail='conditioned response [%]',
       citation='Wagner et al. (1968)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(columns=['group', 'X'], data=[
         ['correlated', 20],
         ['uncorrelated', 80],
@@ -58,11 +58,11 @@ class Competition_RelativeValidity(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'X': cc.conditioned_response(x['timesteps'], x['response'], ['X']),
+          'X': cc.conditioned_response(x['timesteps'], x['responses'], ['X']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),
@@ -103,7 +103,7 @@ class Competition_OvershadowingAndForwardBlocking(cc.ClassicalConditioningExperi
       ydetail='elevation scores',
       citation='Holland and Fox (2003)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'A'],
         data=[
@@ -119,11 +119,11 @@ class Competition_OvershadowingAndForwardBlocking(cc.ClassicalConditioningExperi
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),
@@ -170,7 +170,7 @@ class Competition_Unblocking(cc.ClassicalConditioningExperiment):
       ydetail='suppression ratio',
       citation='Dickinson et al. (1976)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'A'],
         data=[
@@ -187,11 +187,11 @@ class Competition_Unblocking(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+          'A': cc.suppression_ratio(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),
@@ -226,7 +226,7 @@ class Competition_BackwardBlocking(cc.ClassicalConditioningExperiment):
       ydetail='mean latency [log s]',
       citation='Miller and Matute (1996)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(columns=['group', 'A'], data=[
         ['control', 1.55],
         ['backward blocking', 1.05],
@@ -238,11 +238,11 @@ class Competition_BackwardBlocking(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+          'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),
@@ -284,7 +284,7 @@ class Competition_Overexpectation(cc.ClassicalConditioningExperiment):
       ydetail='suppression ratio',
       citation='Rescorla (1970)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'A'],
         data=[
@@ -300,11 +300,11 @@ class Competition_Overexpectation(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+          'A': cc.suppression_ratio(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),
@@ -345,7 +345,7 @@ class Competition_Superconditioning(cc.ClassicalConditioningExperiment):
       ydetail='suppression ratio',
       citation='Rescorla (1971)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'A'],
         data=[
@@ -361,11 +361,11 @@ class Competition_Superconditioning(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'A': cc.suppression_ratio(x['timesteps'], x['response'], ['A']),
+          'A': cc.suppression_ratio(x['timesteps'], x['responses'], ['A']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),

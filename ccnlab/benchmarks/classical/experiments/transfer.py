@@ -48,7 +48,7 @@ class Transfer_Reacquisition(cc.ClassicalConditioningExperiment):
       ydetail='elevation score',
       citation='Ricker & Bouton (1996)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'session', 'A'],
         data=[
@@ -102,12 +102,12 @@ class Transfer_Reacquisition(cc.ClassicalConditioningExperiment):
       )
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return cc.trials_to_sessions(
       pd.melt(
         self.dataframe(
           lambda x: {
-            'A': cc.conditioned_response(x['timesteps'], x['response'], ['A']),
+            'A': cc.conditioned_response(x['timesteps'], x['responses'], ['A']),
           } if x['phase'] == 'reacquisition' else None,
           include_trial=False,
           include_trial_in_phase=True,

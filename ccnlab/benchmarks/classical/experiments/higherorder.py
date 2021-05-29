@@ -29,7 +29,7 @@ class HigherOrder_SensoryPreconditioning(cc.ClassicalConditioningExperiment):
       ydetail='conditioned response',
       citation='Brogden (1939)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'B'], data=[
           ['control', 0.5],
@@ -43,11 +43,11 @@ class HigherOrder_SensoryPreconditioning(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'B': cc.conditioned_response(x['timesteps'], x['response'], ['B']),
+          'B': cc.conditioned_response(x['timesteps'], x['responses'], ['B']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),
@@ -105,7 +105,7 @@ class HigherOrder_SecondOrderConditioning(cc.ClassicalConditioningExperiment):
       ydetail='mean latency [log s]',
       citation='Yin et al. (1994)',
     )
-    self.results = pd.melt(
+    self.empirical_results = pd.melt(
       pd.DataFrame(
         columns=['group', 'B'],
         data=[
@@ -123,11 +123,11 @@ class HigherOrder_SecondOrderConditioning(cc.ClassicalConditioningExperiment):
       plot_bars(df, ax=ax, x='group', xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'], wrap=11)
     ]
 
-  def summarize(self):
+  def simulated_results(self):
     return pd.melt(
       self.dataframe(
         lambda x: {
-          'B': cc.conditioned_response(x['timesteps'], x['response'], ['B']),
+          'B': cc.conditioned_response(x['timesteps'], x['responses'], ['B']),
         } if x['phase'] == 'test' else None,
         include_trial=False,
       ),
