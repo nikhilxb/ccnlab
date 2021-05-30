@@ -211,7 +211,7 @@ class Recovery_SpontaneousRecovery(cc.ClassicalConditioningExperiment):
     })
     self.meta = dict(
       ylabel='conditioned response',
-      ydetail='mean response per min',
+      ydetail='conditioned response [#/min]',
       citation='Rescorla (2004)',
     )
     self.results = pd.melt(
@@ -313,7 +313,7 @@ class Recovery_Renewal(cc.ClassicalConditioningExperiment):
     })
     self.meta = dict(
       ylabel='conditioned response',
-      ydetail='mean freezing [%]',
+      ydetail='conditioned response [%]',
       citation='Harris et al. (2000)',
     )
     self.results = pd.melt(

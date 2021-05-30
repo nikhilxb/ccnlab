@@ -38,7 +38,7 @@ class Extinction_ContinuousVsPartial(cc.ClassicalConditioningExperiment):
     })
     self.meta = dict(
       ylabel='conditioned response',
-      ydetail='mean suppression [(ctx-cs)/cs]',
+      ydetail='suppression [(ctx-cs)/cs]',
       citation='Wagner et al. (1967)',
     )
     self.results = pd.melt(

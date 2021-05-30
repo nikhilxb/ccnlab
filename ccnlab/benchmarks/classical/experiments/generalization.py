@@ -65,7 +65,7 @@ class Generalization_NovelVsInhibitor(cc.ClassicalConditioningExperiment):
     )
     self.plots = [
       lambda df, ax, **kwargs: cc.
-      plot_bars(df, ax=ax, x='group', split=None, xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'])
+      plot_bars(df, ax=ax, x='group', split=None, xlabel=kwargs['xlabel'], ylabel=kwargs['ylabel'], wrap=11)
     ]
 
   def summarize(self):
@@ -120,7 +120,7 @@ class Generalization_AddVsRemove(cc.ClassicalConditioningExperiment):
     })
     self.meta = dict(
       ylabel='conditioned response',
-      ydetail='mean conditioned response [%]',
+      ydetail='conditioned response [%]',
       citation='Wagner et al. (1967)',
     )
     self.results = pd.melt(

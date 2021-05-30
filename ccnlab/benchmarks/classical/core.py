@@ -115,9 +115,6 @@ def build_stimuli(node):
   recurse(node, None)
   return stimuli, phases
 
-  import textwrap
-
-
 def repr_node(node):
   name = type(node).__name__
   if name == 'Trial':
@@ -280,7 +277,7 @@ class ClassicalConditioningExperiment:
           if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
         plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind[i])
 
-  def multiplot(self, axes, dfs, names, is_empirical, figsize=(6, 4), xlabel=True, ylabel=False, show_titles=True):
+  def multiplot(self, axes, dfs, names, is_empirical, figsize=(6, 4), xlabel=True, ylabel=False, show_titles=True, exp_name=None):
     assert len(dfs) == len(names)
     assert len(is_empirical) == len(names)
     for plotfn in self.plots:
@@ -296,8 +293,9 @@ class ClassicalConditioningExperiment:
         if ylabel:
           ylab = self.meta.get('ylabel', None)
           if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
+        if exp_name is None: exp_name = exp.name
         if i == 0:
-            ylab = '\n'.join(self.name.split('_'))
+            ylab = '\n'.join(exp_name.split('_'))
 
         plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind)
         if show_titles:
@@ -334,7 +332,7 @@ def conditioned_response(stimuli, responses, during_cs, during_us=False):
 
 
 def suppression_ratio(stimuli, responses, during_cs, during_us=False):
-  responses = [1 if r == 0 else 1 for r in responses]
+  responses = [1 if r == 0 else 0 for r in responses]
   cs = count_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
   ctx = count_responses(stimuli, responses, during_cs=[], during_us=during_us)
   num = cs
@@ -464,20 +462,21 @@ def plot_bars(
   ylabel='',
   yaxis=None,
   ax=None,
-  barfrac=0.8,
+  barfrac=1.0,
   label_fontsize=12,
   wrap=None,
 ):
   if ax is None: fig, ax = plt.subplots()
   xs = df[x].unique()
   splits = df[split].unique() if split in df else [None]
-  xvals = pd.Series(np.arange(len(xs)), index=xs)
-  width = barfrac / len(splits)
+  xvals = pd.Series(np.arange(len(xs)), index=xs)  # Leftmost x-coord of bars.
+  width = min(barfrac, 0.9 / len(splits))  # Use preferred bar width unless not enough space.
   palette = sns.color_palette()
   colors = pd.Series([palette[x % len(palette)] for x in range(len(xs))], index=xs)
 
   for i, s in enumerate(splits):
     df_split = df[df[split] == s] if split in df else df
+    # Offset by i * width to space splits; offset by width / 2 because bar() uses middle x-coord.
     bar = ax.bar(
       xvals[df_split[x]] + i * width + width / 2, df_split[y], width, color=colors[df_split[x]]
     )
@@ -494,10 +493,12 @@ def plot_bars(
         labels[i].set_color(color)
 
   sns.despine()
-  ax.set_xticks(xvals + len(splits) * width / 2)
+  ax.set_xticks(xvals + len(splits) * width / 2)  # Middle x-coord of split group.
   ax.set_xticklabels([
     '\n'.join(textwrap.wrap(x, wrap, break_long_words=False)) if wrap is not None else x for x in xs
-  ], rotation=10)
+  ])
+  ax.margins(x=0)
+  #ax.set_xlim(len(splits) * width / 2 - 1, len(xs) + len(splits) * width / 2)
   if yaxis is not None:
     ax.set_ylim(yaxis[0], yaxis[1])
     ax.set_yticks(np.arange(yaxis[0], yaxis[1] + yaxis[2], step=yaxis[2]))

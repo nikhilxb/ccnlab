@@ -29,7 +29,7 @@ class Acquisition_ContinuousVsPartial(cc.ClassicalConditioningExperiment):
     })
     self.meta = dict(
       ylabel='conditioned response',
-      ydetail='mean time to error [s]',
+      ydetail='time to error [s]',
       citation='Wagner et al. (1967)',
     )
     self.results = pd.melt(

@@ -252,7 +252,7 @@ class Discrimination_NegativePatterningCommonCue(cc.ClassicalConditioningExperim
     })
     self.meta = dict(
       ylabel='conditioned response',
-      ydetail='conditioned response [per min]',
+      ydetail='conditioned response [#/min]',
       citation='Redhead & Pearce (1998)',
     )
     self.results = pd.concat([
@@ -340,7 +340,7 @@ class Discrimination_NegativePatterningThreeCues(cc.ClassicalConditioningExperim
     })
     self.meta = dict(
       ylabel='conditioned response',
-      ydetail='conditioned response [per min]',
+      ydetail='conditioned response [#/min]',
       citation='Redhead & Pearce (1995)',
     )
     self.results = pd.melt(
@@ -500,7 +500,7 @@ class Discrimination_FeaturePositive(cc.ClassicalConditioningExperiment):
     })
     self.meta = dict(
       ylabel='conditioned response',
-      ydetail='total headjerks [%]',
+      ydetail='conditioned response [%]',
       citation='Ross & Holland (1981)',
     )
     self.results = pd.melt(
@@ -587,7 +587,7 @@ class Discrimination_FeatureNegative(cc.ClassicalConditioningExperiment):
     self._tps = tps
     self.meta = dict(
       ylabel='suppression ratio',
-      ydetail='mean suppression ratio',
+      ydetail='suppression ratio',
       citation='Holland (1984)',
     )
     self.results = pd.melt(
