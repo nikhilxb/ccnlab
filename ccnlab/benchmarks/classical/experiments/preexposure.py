@@ -10,28 +10,29 @@ class PreExposure_LatentInhibitionVsPerceptualLearning(cc.ClassicalConditioningE
 
   Source: 8.1, 8.7 - Figure 38
   """
+
   def __init__(self, n_preexpose=20, n_test=10):
     super().__init__({
       'same ctx, no preexpose':
-        cc.seq(
-          cc.seq(cc.trial('B-', ctx='K1'), repeat=n_preexpose, name='preexpose'),
-          cc.seq(cc.trial('A+', ctx='K1'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('B-', ctx='K1'), repeat=n_preexpose, name='preexpose'),
+        cc.seq(cc.trial('A+', ctx='K1'), repeat=n_test, name='test'),
+      ),
       'same ctx, preexpose':
-        cc.seq(
-          cc.seq(cc.trial('A-', ctx='K1'), repeat=n_preexpose, name='preexpose'),
-          cc.seq(cc.trial('A+', ctx='K1'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('A-', ctx='K1'), repeat=n_preexpose, name='preexpose'),
+        cc.seq(cc.trial('A+', ctx='K1'), repeat=n_test, name='test'),
+      ),
       'different ctx, no preexpose':
-        cc.seq(
-          cc.seq(cc.trial('B-', ctx='K1'), repeat=n_preexpose, name='preexpose'),
-          cc.seq(cc.trial('A+', ctx='K2'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('B-', ctx='K1'), repeat=n_preexpose, name='preexpose'),
+        cc.seq(cc.trial('A+', ctx='K2'), repeat=n_test, name='test'),
+      ),
       'different ctx, preexpose':
-        cc.seq(
-          cc.seq(cc.trial('A-', ctx='K1'), repeat=n_preexpose, name='preexpose'),
-          cc.seq(cc.trial('A+', ctx='K2'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('A-', ctx='K1'), repeat=n_preexpose, name='preexpose'),
+        cc.seq(cc.trial('A+', ctx='K2'), repeat=n_test, name='test'),
+      ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -73,15 +74,16 @@ class PreExposure_USPreExposure(cc.ClassicalConditioningExperiment):
 
   Source: 8.5 - Figure 41
   """
+
   def __init__(self, n_preexpose=70, n_test=40):
     super().__init__({
       'no preexpose':
-        cc.seq(cc.seq(cc.trial('A+'), repeat=n_test, name='test'),),
+      cc.seq(cc.seq(cc.trial('A+'), repeat=n_test, name='test'),),
       'preexpose':
-        cc.seq(
-          cc.seq(cc.trial('+'), repeat=n_preexpose, name='preexpose'),
-          cc.seq(cc.trial('A+'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('+'), repeat=n_preexpose, name='preexpose'),
+        cc.seq(cc.trial('A+'), repeat=n_test, name='test'),
+      ),
     })
     self.meta = dict(
       ylabel='suppression ratio',

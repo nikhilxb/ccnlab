@@ -9,20 +9,21 @@ class HigherOrder_SensoryPreconditioning(cc.ClassicalConditioningExperiment):
 
   Source: 11.1 - Figure 57
   """
+
   def __init__(self, n_nonreinforced=100, n_reinforced=20, n_test=1):
     super().__init__({
       'control':
-        cc.seq(
-          cc.seq(cc.trial('-'), repeat=n_nonreinforced, name='train'),
-          cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
-          cc.seq(cc.trial('B'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('-'), repeat=n_nonreinforced, name='train'),
+        cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
+        cc.seq(cc.trial('B'), repeat=n_test, name='test'),
+      ),
       'sensory preconditioning':
-        cc.seq(
-          cc.seq(cc.trial('AB-'), repeat=n_nonreinforced, name='train'),
-          cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
-          cc.seq(cc.trial('B'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('AB-'), repeat=n_nonreinforced, name='train'),
+        cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
+        cc.seq(cc.trial('B'), repeat=n_test, name='test'),
+      ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -63,42 +64,43 @@ class HigherOrder_SecondOrderConditioning(cc.ClassicalConditioningExperiment):
 
   Source: 11.2, 11.3 - Figure 58
   """
+
   def __init__(self, n_reinforced=170, n_nonreinforced_few=1, n_nonreinforced_many=85, n_test=4):
     super().__init__({
       'control':
-        cc.seq(
-          cc.seq(cc.trial('AB+'), repeat=n_reinforced, name='train'),
-          cc.seq(cc.trial('B'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('AB+'), repeat=n_reinforced, name='train'),
+        cc.seq(cc.trial('B'), repeat=n_test, name='test'),
+      ),
       'interspersed few':
-        cc.seq(
-          cc.seq(cc.trial('A+'), repeat=math.ceil(n_reinforced / 2), name='train'),
-          cc.seq(cc.trial('AB-'), repeat=n_nonreinforced_few, name='train'),
-          cc.seq(cc.trial('A+'), repeat=n_reinforced - math.ceil(n_reinforced / 2), name='train'),
-          cc.seq(cc.trial('B'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('A+'), repeat=math.ceil(n_reinforced / 2), name='train'),
+        cc.seq(cc.trial('AB-'), repeat=n_nonreinforced_few, name='train'),
+        cc.seq(cc.trial('A+'), repeat=n_reinforced - math.ceil(n_reinforced / 2), name='train'),
+        cc.seq(cc.trial('B'), repeat=n_test, name='test'),
+      ),
       'sequential few':
-        cc.seq(
-          cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
-          cc.seq(cc.trial('AB-'), repeat=n_nonreinforced_few, name='train'),
-          cc.seq(cc.trial('B'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
+        cc.seq(cc.trial('AB-'), repeat=n_nonreinforced_few, name='train'),
+        cc.seq(cc.trial('B'), repeat=n_test, name='test'),
+      ),
       'interspersed many':
+      cc.seq(
         cc.seq(
-          cc.seq(
-            cc.seq(cc.trial('A+'), repeat=math.ceil(n_reinforced / n_nonreinforced_many)),
-            cc.seq(cc.trial('AB-'), repeat=1),
-            repeat=n_nonreinforced_many,
-            name='train',
-          ),
-          cc.seq(cc.trial('B'), repeat=n_test, name='test'),
+          cc.seq(cc.trial('A+'), repeat=math.ceil(n_reinforced / n_nonreinforced_many)),
+          cc.seq(cc.trial('AB-'), repeat=1),
+          repeat=n_nonreinforced_many,
+          name='train',
         ),
+        cc.seq(cc.trial('B'), repeat=n_test, name='test'),
+      ),
       'sequential many':
-        cc.seq(
-          cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
-          cc.seq(cc.trial('AB-'), repeat=n_nonreinforced_many, name='train'),
-          cc.seq(cc.trial('B'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
+        cc.seq(cc.trial('AB-'), repeat=n_nonreinforced_many, name='train'),
+        cc.seq(cc.trial('B'), repeat=n_test, name='test'),
+      ),
     })
     self.meta = dict(
       ylabel='conditioned response',

@@ -165,6 +165,7 @@ class ClassicalConditioningExperiment:
   """An `ClassicalConditioningExperiment` is an environment that simulates the schedule of stimuli presented in a real-world classical conditioning experiment drawn from peer-reviewed academic research, and facilitates the comparison of simulated results with empirical results. Developers
   should subclass this to implement a particular experiment.
   """
+
   def __init__(self, spec, response_key='response'):
     self.spec = spec
     self.response_key = response_key
@@ -214,12 +215,12 @@ class ClassicalConditioningExperiment:
     return self.phases[group][trial]
 
   def dataframe(
-    self,
-    fn,
-    include_group=True,
-    include_trial=True,
-    include_phase=False,
-    include_trial_in_phase=False
+      self,
+      fn,
+      include_group=True,
+      include_trial=True,
+      include_phase=False,
+      include_trial_in_phase=False
   ):
     """Apply the given processing function on the stimuli and responses to create rows in a
     dataframe."""
@@ -292,11 +293,21 @@ class ClassicalConditioningExperiment:
   def schedule(self):
     return _repr_spec(self.spec)
 
-  def multiplot(self, axes, dfs, names, is_empirical, figsize=(6, 4), xlabel=True, ylabel=False, show_titles=True, exp_name=None):
+  def multiplot(
+      self,
+      axes,
+      dfs,
+      names,
+      is_empirical,
+      figsize=(6, 4),
+      xlabel=True,
+      ylabel=False,
+      show_titles=True,
+      exp_name=None
+  ):
     assert len(dfs) == len(names)
     assert len(is_empirical) == len(names)
     for plotfn in self.plots:
-      #fig, axes = plt.subplots(1, len(names), figsize=(figsize[0] * 2, figsize[1]))
       for i, df in enumerate(dfs):
         kind = 'empirical' if is_empirical[i] else 'simulation'
 
@@ -308,13 +319,13 @@ class ClassicalConditioningExperiment:
         if ylabel:
           ylab = self.meta.get('ylabel', None)
           if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
-        if exp_name is None: exp_name = exp.name
+        if exp_name is None: exp_name = self.name
         if i == 0:
-            ylab = '\n'.join(exp_name.split('_'))
+          ylab = '\n'.join(exp_name.split('_'))
 
         plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind)
         if show_titles:
-            axes[i].set_title(names[i], y=1.0, pad=14, fontsize=20)
+          axes[i].set_title(names[i], y=1.0, pad=14, fontsize=20)
         axes[i].get_yaxis().set_ticks([])
 
 
@@ -367,12 +378,12 @@ def suppression_ratio(stimuli, responses, during_cs, during_us=False):
 
 
 def trials_to_sessions(
-  df,
-  trials_per_session,
-  keep_first=False,
-  trial_name='trial',
-  session_name='session',
-  value_name='value',
+    df,
+    trials_per_session,
+    keep_first=False,
+    trial_name='trial',
+    session_name='session',
+    value_name='value',
 ):
   """Aggregate consecutive spans of trials into sessions through averaging. Spans have length
   `trials_per_session`. Optionally, the first trial can be included (via `keep_first`)."""
@@ -422,20 +433,20 @@ def _pt_to_data_coord(ax, x, y):
 
 
 def plot_lines(
-  df,
-  x='trial',
-  y='value',
-  group='group',
-  split='variable',
-  legend=True,
-  label=True,
-  xlabel=None,
-  ylabel='',
-  yaxis=None,
-  ax=None,
-  label_fontsize=12,
-  legend_cols=1,
-  legend_pos=(0.5, -0.3),
+    df,
+    x='trial',
+    y='value',
+    group='group',
+    split='variable',
+    legend=True,
+    label=True,
+    xlabel=None,
+    ylabel='',
+    yaxis=None,
+    ax=None,
+    label_fontsize=12,
+    legend_cols=1,
+    legend_pos=(0.5, -0.3),
 ):
   """Plot line graph, coloring by `group` and splitting into multiple lines within a group using 
   `split`. Expects `df` in long-form.
@@ -445,7 +456,7 @@ def plot_lines(
   g = sns.lineplot(data=df, x=x, y=y, hue=group, units=split, estimator=None, markers=True, ax=ax)
   sns.despine()
   if legend:
-    ax.legend(loc='best', ncol=legend_cols)#, bbox_to_anchor=legend_pos)
+    ax.legend(loc='best', ncol=legend_cols)  #, bbox_to_anchor=legend_pos)
   elif ax.get_legend() is not None:
     ax.get_legend().remove()
   if yaxis is not None:
@@ -476,18 +487,18 @@ def plot_lines(
 
 
 def plot_bars(
-  df,
-  x='group',
-  y='value',
-  split='variable',
-  label='variable',
-  xlabel=None,
-  ylabel='',
-  yaxis=None,
-  ax=None,
-  barfrac=1.0,
-  label_fontsize=12,
-  wrap=None,
+    df,
+    x='group',
+    y='value',
+    split='variable',
+    label='variable',
+    xlabel=None,
+    ylabel='',
+    yaxis=None,
+    ax=None,
+    barfrac=1.0,
+    label_fontsize=12,
+    wrap=None,
 ):
   """Plot bar graph, coloring by `group` and splitting into multiple bars within a group using 
   `split`. Expects `df` in long-form.

@@ -9,39 +9,40 @@ class Transfer_Reacquisition(cc.ClassicalConditioningExperiment):
 
   Source: 9.2 - Figure 48
   """
+
   def __init__(
-    self,
-    n_acquisition=10,
-    n_extinction_few=15,
-    n_extinction_many=100,
-    n_reacquisition_few=8,
-    n_reacquisition_many=12
+      self,
+      n_acquisition=10,
+      n_extinction_few=15,
+      n_extinction_many=100,
+      n_reacquisition_few=8,
+      n_reacquisition_many=12
   ):
     super().__init__({
       'control few':
-        cc.seq(
-          cc.seq(cc.trial('-'), repeat=n_acquisition, name='acquisition'),
-          cc.seq(cc.trial('-'), repeat=n_extinction_few, name='extinction'),
-          cc.seq(cc.trial('A+'), repeat=n_reacquisition_few, name='reacquisition'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('-'), repeat=n_acquisition, name='acquisition'),
+        cc.seq(cc.trial('-'), repeat=n_extinction_few, name='extinction'),
+        cc.seq(cc.trial('A+'), repeat=n_reacquisition_few, name='reacquisition'),
+      ),
       'extinction few':
-        cc.seq(
-          cc.seq(cc.trial('A+'), repeat=n_acquisition, name='acquisition'),
-          cc.seq(cc.trial('A-'), repeat=n_extinction_few, name='extinction'),
-          cc.seq(cc.trial('A+'), repeat=n_reacquisition_few, name='reacquisition'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('A+'), repeat=n_acquisition, name='acquisition'),
+        cc.seq(cc.trial('A-'), repeat=n_extinction_few, name='extinction'),
+        cc.seq(cc.trial('A+'), repeat=n_reacquisition_few, name='reacquisition'),
+      ),
       'control many':
-        cc.seq(
-          cc.seq(cc.trial('-'), repeat=n_acquisition, name='acquisition'),
-          cc.seq(cc.trial('-'), repeat=n_extinction_many, name='extinction'),
-          cc.seq(cc.trial('A+'), repeat=n_reacquisition_many, name='reacquisition'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('-'), repeat=n_acquisition, name='acquisition'),
+        cc.seq(cc.trial('-'), repeat=n_extinction_many, name='extinction'),
+        cc.seq(cc.trial('A+'), repeat=n_reacquisition_many, name='reacquisition'),
+      ),
       'extinction many':
-        cc.seq(
-          cc.seq(cc.trial('A+'), repeat=n_acquisition, name='acquisition'),
-          cc.seq(cc.trial('A-'), repeat=n_extinction_many, name='extinction'),
-          cc.seq(cc.trial('A+'), repeat=n_reacquisition_many, name='reacquisition'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('A+'), repeat=n_acquisition, name='acquisition'),
+        cc.seq(cc.trial('A-'), repeat=n_extinction_many, name='extinction'),
+        cc.seq(cc.trial('A+'), repeat=n_reacquisition_many, name='reacquisition'),
+      ),
     })
     self.meta = dict(
       ylabel='conditioned response',

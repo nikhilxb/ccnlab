@@ -10,36 +10,37 @@ class Competition_RelativeValidity(cc.ClassicalConditioningExperiment):
 
   Source: 7.1 - Figure 29
   """
+
   def __init__(self, n_correlated=200, n_uncorrelated=100, n_test=10):
     super().__init__({
       'correlated':
+      cc.seq(
         cc.seq(
-          cc.seq(
-            cc.trial('XA+'),
-            cc.trial('XB-'),
-            repeat=n_correlated,
-            name='train',
-          ), cc.seq(
-            cc.trial('X'),
-            repeat=n_test,
-            name='test',
-          )
-        ),
+          cc.trial('XA+'),
+          cc.trial('XB-'),
+          repeat=n_correlated,
+          name='train',
+        ), cc.seq(
+          cc.trial('X'),
+          repeat=n_test,
+          name='test',
+        )
+      ),
       'uncorrelated':
+      cc.seq(
         cc.seq(
-          cc.seq(
-            cc.trial('XA+'),
-            cc.trial('XA-'),
-            cc.trial('XB+'),
-            cc.trial('XB-'),
-            repeat=n_uncorrelated,
-            name='train',
-          ), cc.seq(
-            cc.trial('X'),
-            repeat=n_test,
-            name='test',
-          )
-        ),
+          cc.trial('XA+'),
+          cc.trial('XA-'),
+          cc.trial('XB+'),
+          cc.trial('XB-'),
+          repeat=n_uncorrelated,
+          name='train',
+        ), cc.seq(
+          cc.trial('X'),
+          repeat=n_test,
+          name='test',
+        )
+      ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -77,26 +78,27 @@ class Competition_OvershadowingAndForwardBlocking(cc.ClassicalConditioningExperi
 
   Source: 7.2, 7.5 - Figure 30
   """
+
   def __init__(self, n_train=20, n_test=1):
     super().__init__({
       'control':
-        cc.seq(
-          cc.seq(cc.trial('-'), repeat=n_train, name='train'),
-          cc.seq(cc.trial('A+'), repeat=n_train, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('-'), repeat=n_train, name='train'),
+        cc.seq(cc.trial('A+'), repeat=n_train, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
       'overshadowing':
-        cc.seq(
-          cc.seq(cc.trial('C+'), repeat=n_train, name='train'),
-          cc.seq(cc.trial('AB+'), repeat=n_train, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('C+'), repeat=n_train, name='train'),
+        cc.seq(cc.trial('AB+'), repeat=n_train, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
       'forward blocking':
-        cc.seq(
-          cc.seq(cc.trial('B+'), repeat=n_train, name='train'),
-          cc.seq(cc.trial('AB+'), repeat=n_train, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('B+'), repeat=n_train, name='train'),
+        cc.seq(cc.trial('AB+'), repeat=n_train, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -138,32 +140,33 @@ class Competition_Unblocking(cc.ClassicalConditioningExperiment):
 
   Source: 7.3, 7.4 - Figure 31
   """
+
   def __init__(self, n_first=40, n_second=280, n_test=1):
     super().__init__({
       'weak/weak':
-        cc.seq(
-          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
       'weak/strong':
-        cc.seq(
-          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('AB#'), repeat=n_second, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('AB#'), repeat=n_second, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
       'strong/strong':
-        cc.seq(
-          cc.seq(cc.trial('B#'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('AB#'), repeat=n_second, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('B#'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('AB#'), repeat=n_second, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
       'strong/weak':
-        cc.seq(
-          cc.seq(cc.trial('B#'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('B#'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
     })
     self.meta = dict(
       ylabel='suppression ratio',
@@ -206,20 +209,21 @@ class Competition_BackwardBlocking(cc.ClassicalConditioningExperiment):
 
   Source: 7.7 - Figure 33
   """
+
   def __init__(self, n_train=20, n_test=1):
     super().__init__({
       'control':
-        cc.seq(
-          cc.seq(cc.trial('AB+'), repeat=n_train, name='train'),
-          cc.seq(cc.trial('C+'), repeat=n_train, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('AB+'), repeat=n_train, name='train'),
+        cc.seq(cc.trial('C+'), repeat=n_train, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
       'backward blocking':
-        cc.seq(
-          cc.seq(cc.trial('AB+'), repeat=n_train, name='train'),
-          cc.seq(cc.trial('B+'), repeat=n_train, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('AB+'), repeat=n_train, name='train'),
+        cc.seq(cc.trial('B+'), repeat=n_train, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -256,28 +260,29 @@ class Competition_Overexpectation(cc.ClassicalConditioningExperiment):
 
   Source: 7.8 - Figure 34
   """
+
   def __init__(self, n_first=16, n_second=2, n_test=2):
     super().__init__({
       'control 1':
-        cc.seq(
-          cc.seq(cc.trial('A+'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('A+'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
       'control 2':
-        cc.seq(
-          cc.seq(cc.trial('A+'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('A+'), repeat=n_second, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('A+'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('A+'), repeat=n_second, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
       'overexpectation':
-        cc.seq(
-          cc.seq(cc.trial('A+'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('A+'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
     })
     self.meta = dict(
       ylabel='suppression ratio',
@@ -319,26 +324,27 @@ class Competition_Superconditioning(cc.ClassicalConditioningExperiment):
 
   Source: 7.9 - Figure 35
   """
+
   def __init__(self, n_first=40, n_second=2, n_test=3):
     super().__init__({
       'forward blocking':
-        cc.seq(
-          cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('B+'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
       'overshadowing':
-        cc.seq(
-          cc.seq(cc.trial('-'), cc.trial('+'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('-'), cc.trial('+'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
       'superconditioning':
-        cc.seq(
-          cc.seq(cc.trial('B-'), cc.trial('+'), repeat=n_first, name='train'),
-          cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
-          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-        ),
+      cc.seq(
+        cc.seq(cc.trial('B-'), cc.trial('+'), repeat=n_first, name='train'),
+        cc.seq(cc.trial('AB+'), repeat=n_second, name='train'),
+        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+      ),
     })
     self.meta = dict(
       ylabel='suppression ratio',
