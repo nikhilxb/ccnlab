@@ -184,15 +184,19 @@ class ClassicalConditioningExperiment:
     self.cs_space = tuple(sorted(cs_space))
     self.ctx_space = tuple(sorted(ctx_space))
 
-    self.data = {
-      group: [[defaultdict(list) for timestep in trial] for trial in stimuli]
-      for group, stimuli in self.stimuli.items()
-    }
+    self.data = {}
+    self.reset()
 
     self.name = self.__class__.__name__
     self.meta = {}
     self.empirical_results = None
     self.plots = []
+
+  def reset(self):
+    self.data = {
+      group: [[defaultdict(list) for timestep in trial] for trial in stimuli]
+      for group, stimuli in self.stimuli.items()
+    }
 
   def stimulus(self, group, trial, timestep, vector=False):
     """Return the stimulus (tuple (cs, ctx, us))) of a timestep within a trial within a group.
@@ -287,6 +291,31 @@ class ClassicalConditioningExperiment:
 
   def schedule(self):
     return _repr_spec(self.spec)
+
+  def multiplot(self, axes, dfs, names, is_empirical, figsize=(6, 4), xlabel=True, ylabel=False, show_titles=True, exp_name=None):
+    assert len(dfs) == len(names)
+    assert len(is_empirical) == len(names)
+    for plotfn in self.plots:
+      #fig, axes = plt.subplots(1, len(names), figsize=(figsize[0] * 2, figsize[1]))
+      for i, df in enumerate(dfs):
+        kind = 'empirical' if is_empirical[i] else 'simulation'
+
+        xlab = ''
+        if xlabel:
+          xlab = self.meta.get('xlabel', None)
+          if kind[i] == 'empirical': xlab = self.meta.get('xdetail', xlab)
+        ylab = ''
+        if ylabel:
+          ylab = self.meta.get('ylabel', None)
+          if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
+        if exp_name is None: exp_name = exp.name
+        if i == 0:
+            ylab = '\n'.join(exp_name.split('_'))
+
+        plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind)
+        if show_titles:
+            axes[i].set_title(names[i], y=1.0, pad=14, fontsize=20)
+        axes[i].get_yaxis().set_ticks([])
 
 
 # ==================================================================================================
@@ -405,7 +434,7 @@ def plot_lines(
   yaxis=None,
   ax=None,
   label_fontsize=12,
-  legend_cols=4,
+  legend_cols=1,
   legend_pos=(0.5, -0.3),
 ):
   """Plot line graph, coloring by `group` and splitting into multiple lines within a group using 
@@ -416,7 +445,7 @@ def plot_lines(
   g = sns.lineplot(data=df, x=x, y=y, hue=group, units=split, estimator=None, markers=True, ax=ax)
   sns.despine()
   if legend:
-    ax.legend(loc='lower center', ncol=legend_cols, bbox_to_anchor=legend_pos)
+    ax.legend(loc='best', ncol=legend_cols)#, bbox_to_anchor=legend_pos)
   elif ax.get_legend() is not None:
     ax.get_legend().remove()
   if yaxis is not None:
@@ -456,7 +485,7 @@ def plot_bars(
   ylabel='',
   yaxis=None,
   ax=None,
-  barfrac=0.6,
+  barfrac=1.0,
   label_fontsize=12,
   wrap=None,
 ):
@@ -495,7 +524,7 @@ def plot_bars(
     '\n'.join(textwrap.wrap(x, wrap, break_long_words=False)) if wrap is not None else x for x in xs
   ])
   ax.margins(x=0)
-  ax.set_xlim(len(splits) * width / 2 - 1, len(xs) + len(splits) * width / 2)
+  #ax.set_xlim(len(splits) * width / 2 - 1, len(xs) + len(splits) * width / 2)
   if yaxis is not None:
     ax.set_ylim(yaxis[0], yaxis[1])
     ax.set_yticks(np.arange(yaxis[0], yaxis[1] + yaxis[2], step=yaxis[2]))
