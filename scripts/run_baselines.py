@@ -13,17 +13,19 @@ GENERATE_TABLE = True
 NUM_SUBJECTS = 20
 
 EXP_NAMES = ['*']
-# EXP_NAMES = [
-#   'Acquisition_ContinuousVsPartial', 'Extinction_ContinuousVsPartial',
-#   'Generalization_NovelVsInhibitor', 'Generalization_AddVsRemove',
-#   'Competition_OvershadowingAndForwardBlocking',
-#   'Recovery_Overshadowing',
-#   'HigherOrder_SensoryPreconditioning',
-# ]
 EXP_NAMES = [
-  # 'Acquisition_ContinuousVsPartial',
-  'PreExposure_LatentInhibitionVsPerceptualLearning',
+  'Acquisition_ContinuousVsPartial',
+  'Extinction_ContinuousVsPartial',
+  'Generalization_NovelVsInhibitor',
+  'Generalization_AddVsRemove',
+  'Competition_OvershadowingAndForwardBlocking',
+  'Recovery_Overshadowing',
+  'HigherOrder_SensoryPreconditioning',
 ]
+# EXP_NAMES = [
+#   # 'Acquisition_ContinuousVsPartial',
+#   'PreExposure_LatentInhibitionVsPerceptualLearning',
+# ]
 MODEL_NAMES = [
   'Rescorla-Wagner',
   'Kalman Filter',
@@ -37,7 +39,7 @@ random.seed(0)
 
 exps = classical.registry(*EXP_NAMES)
 
-PLOT_WIDTH, PLOT_HEIGHT = (4, 3)
+PLOT_WIDTH, PLOT_HEIGHT = (4, 2)
 fig, axes = plt.subplots(
   len(exps),
   1 + len(MODEL_NAMES),
@@ -95,7 +97,7 @@ for e, exp in enumerate(exps):
         axes[e][m].get_yaxis().set_ticks([])
 
 if GENERATE_PLOTS:
-  fig.tight_layout(pad=1.0)
+  fig.tight_layout(pad=0)
   outpath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figure-baselines.png')
   plt.savefig(outpath)
   # plt.show()

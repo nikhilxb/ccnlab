@@ -321,11 +321,8 @@ def sum_responses(stimuli, responses, during_cs=None, during_ctx=None, during_us
 def conditioned_response(stimuli, responses, during_cs, during_us=False):
   """Calculates conditioned response for a single trial."""
   assert len(stimuli) == len(responses)
-  print(stimuli, responses)
   num = sum_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
   denom = sum_responses(stimuli, [1] * len(responses), during_cs=during_cs, during_us=during_us)
-  print(num, denom)
-  # assert False
   if denom == 0: return 0
   return float(num) / denom
 
@@ -334,17 +331,12 @@ def suppression_ratio(stimuli, responses, during_cs, during_us=False):
   """Calculates suppression ratio for a single trial."""
   assert len(stimuli) == len(responses)
   # Invert responses to mimic aversive behavior preparations (see paper for details).
-  print(responses)
   max_r = max(responses)
   responses = [max_r - r for r in responses]
-  print(max_r, responses)
-  print(stimuli)
   cs = sum_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
   ctx = sum_responses(stimuli, responses, during_cs=[], during_us=during_us)
   num = cs
   denom = cs + ctx
-  print(cs, ctx)
-  assert False
   if denom == 0: return 0
   return float(num) / denom
 
