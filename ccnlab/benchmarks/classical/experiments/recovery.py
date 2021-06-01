@@ -8,35 +8,34 @@ class Recovery_LatentInhibition(cc.ClassicalConditioningExperiment):
 
   Source: 10.1 - Figure 50
   """
-
   def __init__(self, n_nonreinforced=40, n_reinforced=10, n_recovery=40, n_test=3):
     super().__init__({
       'control':
-      cc.seq(
-        cc.seq(cc.trial('-'), repeat=n_nonreinforced, name='train'),
-        cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('-'), repeat=n_nonreinforced, name='train'),
+          cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
       'latent inhibition':
-      cc.seq(
-        cc.seq(cc.trial('A-'), repeat=n_nonreinforced, name='train'),
-        cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A-'), repeat=n_nonreinforced, name='train'),
+          cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
       'control recovery':
-      cc.seq(
-        cc.seq(cc.trial('-'), repeat=n_nonreinforced, name='train'),
-        cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
-        cc.seq(cc.trial('-'), repeat=n_recovery, name='train'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('-'), repeat=n_nonreinforced, name='train'),
+          cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
+          cc.seq(cc.trial('-'), repeat=n_recovery, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
       'latent inhibition recovery':
-      cc.seq(
-        cc.seq(cc.trial('A-'), repeat=n_nonreinforced, name='train'),
-        cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
-        cc.seq(cc.trial('-'), repeat=n_recovery, name='train'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A-'), repeat=n_nonreinforced, name='train'),
+          cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
+          cc.seq(cc.trial('-'), repeat=n_recovery, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -78,27 +77,26 @@ class Recovery_Overshadowing(cc.ClassicalConditioningExperiment):
 
   Source: 10.2 - Figure 51
   """
-
   def __init__(self, n_reinforced=10, n_nonreinforced=10, n_test=1):
     super().__init__({
       'control':
-      cc.seq(
-        cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
-        cc.seq(cc.trial('-'), repeat=n_nonreinforced, name='train'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+'), repeat=n_reinforced, name='train'),
+          cc.seq(cc.trial('-'), repeat=n_nonreinforced, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
       'overshadowing':
-      cc.seq(
-        cc.seq(cc.trial('AB+'), repeat=n_reinforced, name='train'),
-        cc.seq(cc.trial('-'), repeat=n_nonreinforced, name='train'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('AB+'), repeat=n_reinforced, name='train'),
+          cc.seq(cc.trial('-'), repeat=n_nonreinforced, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
       'overshadowing recovery':
-      cc.seq(
-        cc.seq(cc.trial('AB+'), repeat=n_reinforced, name='train'),
-        cc.seq(cc.trial('B-'), repeat=n_nonreinforced, name='train'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('AB+'), repeat=n_reinforced, name='train'),
+          cc.seq(cc.trial('B-'), repeat=n_nonreinforced, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test'),
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -140,16 +138,19 @@ class Recovery_ExternalDisinhibition(cc.ClassicalConditioningExperiment):
 
   Source: 10.5 - Figure 53
   """
-
   def __init__(self, n_acquisition=10, n_extinction=30, n_test=3):
     super().__init__({
       'main':
-      cc.seq(
-        cc.seq(cc.trial('A+'), repeat=n_acquisition, name='acquisition'),
-        cc.seq(cc.trial('A-'), repeat=n_extinction, name='extinction'),
-        cc.seq(cc.trial(('B', 8, 12), ('A', 16, 20), ('+', 19, 20)), repeat=n_test, name='test-1'),
-        cc.seq(cc.trial(('B', 8, 12), ('A', 16, 20), ('+', 19, 20)), repeat=n_test, name='test-2'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+'), repeat=n_acquisition, name='acquisition'),
+          cc.seq(cc.trial('A-'), repeat=n_extinction, name='extinction'),
+          cc.seq(
+            cc.trial(('B', 8, 12), ('A', 16, 20), ('+', 19, 20)), repeat=n_test, name='test-1'
+          ),
+          cc.seq(
+            cc.trial(('B', 8, 12), ('A', 16, 20), ('+', 19, 20)), repeat=n_test, name='test-2'
+          ),
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -192,22 +193,21 @@ class Recovery_SpontaneousRecovery(cc.ClassicalConditioningExperiment):
 
   Source: 10.6 - Figure 54
   """
-
   def __init__(self, n_acquisition=12, n_extinction=4, n_delay=12, n_test=4):
     super().__init__({
       'no delay':
-      cc.seq(
-        cc.seq(cc.trial('A+', ctx='K1'), repeat=n_acquisition, name='acquisition'),
-        cc.seq(cc.trial('A-', ctx='K1'), repeat=n_extinction, name='extinction'),
-        cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+', ctx='K1'), repeat=n_acquisition, name='acquisition'),
+          cc.seq(cc.trial('A-', ctx='K1'), repeat=n_extinction, name='extinction'),
+          cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
+        ),
       'delay':
-      cc.seq(
-        cc.seq(cc.trial('A+', ctx='K1'), repeat=n_acquisition, name='acquisition'),
-        cc.seq(cc.trial('-', ctx='K2'), repeat=n_delay, name='delay'),
-        cc.seq(cc.trial('A-', ctx='K1'), repeat=n_extinction, name='extinction'),
-        cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+', ctx='K1'), repeat=n_acquisition, name='acquisition'),
+          cc.seq(cc.trial('-', ctx='K2'), repeat=n_delay, name='delay'),
+          cc.seq(cc.trial('A-', ctx='K1'), repeat=n_extinction, name='extinction'),
+          cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -296,21 +296,20 @@ class Recovery_Renewal(cc.ClassicalConditioningExperiment):
 
   Source: 10.7 - Figure 55
   """
-
   def __init__(self, n_acquisition=15, n_extinction=20, n_test=10):
     super().__init__({
       'same context':
-      cc.seq(
-        cc.seq(cc.trial('A+', ctx='K3'), repeat=n_acquisition, name='acquisition'),
-        cc.seq(cc.trial('A-', ctx='K1'), repeat=n_extinction, name='extinction'),
-        cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+', ctx='K3'), repeat=n_acquisition, name='acquisition'),
+          cc.seq(cc.trial('A-', ctx='K1'), repeat=n_extinction, name='extinction'),
+          cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
+        ),
       'novel context':
-      cc.seq(
-        cc.seq(cc.trial('A+', ctx='K3'), repeat=n_acquisition, name='acquisition'),
-        cc.seq(cc.trial('A-', ctx='K2'), repeat=n_extinction, name='extinction'),
-        cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+', ctx='K3'), repeat=n_acquisition, name='acquisition'),
+          cc.seq(cc.trial('A-', ctx='K2'), repeat=n_extinction, name='extinction'),
+          cc.seq(cc.trial('A', ctx='K1'), repeat=n_test, name='test'),
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -347,25 +346,24 @@ class Recovery_Reinstatement(cc.ClassicalConditioningExperiment):
 
   Source: 10.8 - Figure 56
   """
-
   def __init__(self, n_acquisition=100, n_extinction=35, n_reinstatement=40, n_test=10):
     super().__init__({
       'no US':
-      cc.seq(
-        cc.seq(cc.trial('A+'), repeat=n_acquisition, name='acquisition'),
-        cc.seq(cc.trial('A-'), repeat=n_extinction, name='extinction'),
-        cc.seq(cc.trial('-'), repeat=n_reinstatement, name='reinstatement'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test-1'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test-2'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+'), repeat=n_acquisition, name='acquisition'),
+          cc.seq(cc.trial('A-'), repeat=n_extinction, name='extinction'),
+          cc.seq(cc.trial('-'), repeat=n_reinstatement, name='reinstatement'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test-1'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test-2'),
+        ),
       'US':
-      cc.seq(
-        cc.seq(cc.trial('A+'), repeat=n_acquisition, name='acquisition'),
-        cc.seq(cc.trial('A-'), repeat=n_extinction, name='extinction'),
-        cc.seq(cc.trial('+'), repeat=n_reinstatement, name='reinstatement'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test-1'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test-2'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+'), repeat=n_acquisition, name='acquisition'),
+          cc.seq(cc.trial('A-'), repeat=n_extinction, name='extinction'),
+          cc.seq(cc.trial('+'), repeat=n_reinstatement, name='reinstatement'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test-1'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test-2'),
+        ),
     })
     self.meta = dict(
       ylabel='suppression ratio',

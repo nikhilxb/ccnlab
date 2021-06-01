@@ -9,8 +9,7 @@ def sigmoid(x):
 
 
 class Model(ABC):
-  """Abstract class for models."""
-
+  """Abstract class for all models."""
   @abstractmethod
   def reset(self):
     """Erase all memory from the model."""
@@ -26,23 +25,15 @@ class Model(ABC):
     """
 
 
-class BinaryResponseModel(Model):
-  """Abstract class for models with binary responses.
-  Binarize the response by passing the value through a logistic sigmoid
-  and sampling from a Bernoulli.
-  """
-
-  def __init__(self, inverse_temperature=1, offset=0, eps=0):
-    self.inverse_temperature = inverse_temperature
-    self.offset = offset
-    self.eps = eps
-
+class ValueBasedModel(Model):
+  """Abstract class for models that calculate value through an RL-style framework."""
   def act(self, cs, ctx, us, t):
     v = self._value(cs, ctx, us, t)
+    response = v
     # p = sigmoid(self.inverse_temperature * (v - self.offset))
-    p = v
-    p = min(1 - self.eps / 2., max(self.eps / 2., p))
-    response = float(random.random() < p)
+    # p = v
+    # p = min(1 - self.eps / 2., max(self.eps / 2., p))
+    # response = float(random.random() < p)
     # ur = 1 if us else 0
     # response = ur if us else cr
     return response

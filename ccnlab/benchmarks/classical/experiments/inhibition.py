@@ -8,23 +8,22 @@ class Inhibition_InhibitorExtinction(cc.ClassicalConditioningExperiment):
 
   Source: 5.3 - Figure 24
   """
-
   def __init__(self, n_train=40, n_extinction=30, n_test=1):
     super().__init__({
       'control':
-      cc.seq(
-        cc.seq(cc.trial('A+'), cc.trial('AX-'), repeat=n_train, name='train'),
-        cc.seq(cc.trial('-'), cc.trial('-'), repeat=n_extinction, name='train'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test-A'),
-        cc.seq(cc.trial('AX'), repeat=n_test, name='test-AX'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+'), cc.trial('AX-'), repeat=n_train, name='train'),
+          cc.seq(cc.trial('-'), cc.trial('-'), repeat=n_extinction, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test-A'),
+          cc.seq(cc.trial('AX'), repeat=n_test, name='test-AX'),
+        ),
       'extinction':
-      cc.seq(
-        cc.seq(cc.trial('A+'), cc.trial('AX-'), repeat=n_train, name='train'),
-        cc.seq(cc.trial('A+'), cc.trial('AX+'), repeat=n_extinction, name='train'),
-        cc.seq(cc.trial('A'), repeat=n_test, name='test-A'),
-        cc.seq(cc.trial('AX'), repeat=n_test, name='test-AX'),
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+'), cc.trial('AX-'), repeat=n_train, name='train'),
+          cc.seq(cc.trial('A+'), cc.trial('AX+'), repeat=n_extinction, name='train'),
+          cc.seq(cc.trial('A'), repeat=n_test, name='test-A'),
+          cc.seq(cc.trial('AX'), repeat=n_test, name='test-AX'),
+        ),
     })
     self.meta = dict(
       ylabel='suppression ratio',

@@ -1,9 +1,9 @@
 import numpy as np
 import random
-from ccnlab.baselines.core import Model, BinaryResponseModel
+from ccnlab.baselines.core import Model, ValueBasedModel
 
 
-class RescorlaWagner(BinaryResponseModel):
+class RescorlaWagner(ValueBasedModel):
   def __init__(self, cs_dim, ctx_dim, alpha=0.3):
     super().__init__()
     self.alpha = alpha  # Learning rate.
@@ -26,7 +26,7 @@ class RescorlaWagner(BinaryResponseModel):
     self.w = self.w + self.alpha * rpe * x  # Weight update.
 
 
-class TemporalDifference(BinaryResponseModel):
+class TemporalDifference(ValueBasedModel):
   def __init__(self, cs_dim, ctx_dim, num_timesteps, alpha=0.3, gamma=0.98):
     super().__init__()
     self.alpha = alpha  # Learning rate.
@@ -61,7 +61,7 @@ class TemporalDifference(BinaryResponseModel):
     self.last_r = r
 
 
-class KalmanFilter(BinaryResponseModel):
+class KalmanFilter(ValueBasedModel):
   def __init__(self, cs_dim, ctx_dim, tau2=0.01, sigma_r2=1, sigma_w2=1):
     super().__init__()
     self.cs_dim = cs_dim
@@ -81,7 +81,7 @@ class KalmanFilter(BinaryResponseModel):
     x = np.array(cs + ctx)
     v = self.w.dot(x)  # Value before update.
     self._update(x=x, r=us)
-    return v  # CR is value.
+    return v
 
   def _update(self, x, r):
     rpe = r - self.w.dot(x)  # Reward prediction error.
@@ -94,7 +94,6 @@ class KalmanFilter(BinaryResponseModel):
 
 class RandomModel(Model):
   """Produces response with probability that changes linearly with each US."""
-
   def __init__(self, start=0.2, delta=0.1, min_prob=0.1, max_prob=0.9):
     self.prob = start
     self.start = start

@@ -165,7 +165,6 @@ class ClassicalConditioningExperiment:
   """An `ClassicalConditioningExperiment` is an environment that simulates the schedule of stimuli presented in a real-world classical conditioning experiment drawn from peer-reviewed academic research, and facilitates the comparison of simulated results with empirical results. Developers
   should subclass this to implement a particular experiment.
   """
-
   def __init__(self, spec, response_key='response'):
     self.spec = spec
     self.response_key = response_key
@@ -215,12 +214,12 @@ class ClassicalConditioningExperiment:
     return self.phases[group][trial]
 
   def dataframe(
-      self,
-      fn,
-      include_group=True,
-      include_trial=True,
-      include_phase=False,
-      include_trial_in_phase=False
+    self,
+    fn,
+    include_group=True,
+    include_trial=True,
+    include_phase=False,
+    include_trial_in_phase=False
   ):
     """Apply the given processing function on the stimuli and responses to create rows in a
     dataframe."""
@@ -260,24 +259,28 @@ class ClassicalConditioningExperiment:
     """Transform collected data into format identical to `self.empirical_results`."""
     raise NotImplementedError
 
+  def schedule(self):
+    """Return a string summarizing the schedule of stimuli presented in this experiment."""
+    return _repr_spec(self.spec)
+
   def plot(self, show='both', figsize=(6, 4), axes=None, xlabel=True, ylabel=True):
     """Plot empirical and/or simulated results."""
-    # show: 'empirical' | 'simulation' | 'both'
+    # show: 'empirical' | 'stimulated' | 'both'
     for plotfn in self.plots:
       if show == 'empirical':
         dfs = [self.empirical_results]
         fig, ax = plt.subplots(figsize=figsize)
         axes = [ax]
         kind = ['empirical']
-      elif show == 'simulation':
+      elif show == 'stimulated':
         dfs = [self.simulated_results()]
         fig, ax = plt.subplots(figsize=figsize)
         axes = [ax]
-        kind = ['simulation']
+        kind = ['stimulated']
       else:
         dfs = [self.empirical_results, self.simulated_results()]
         fig, axes = plt.subplots(1, 2, figsize=(figsize[0] * 2, figsize[1]))
-        kind = ['empirical', 'simulation']
+        kind = ['empirical', 'stimulated']
 
       for i, df in enumerate(dfs):
         xlab = ''
@@ -289,44 +292,6 @@ class ClassicalConditioningExperiment:
           ylab = self.meta.get('ylabel', None)
           if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
         plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind[i])
-
-  def schedule(self):
-    return _repr_spec(self.spec)
-
-  def multiplot(
-      self,
-      axes,
-      dfs,
-      names,
-      is_empirical,
-      figsize=(6, 4),
-      xlabel=True,
-      ylabel=False,
-      show_titles=True,
-      exp_name=None
-  ):
-    assert len(dfs) == len(names)
-    assert len(is_empirical) == len(names)
-    for plotfn in self.plots:
-      for i, df in enumerate(dfs):
-        kind = 'empirical' if is_empirical[i] else 'simulation'
-
-        xlab = ''
-        if xlabel:
-          xlab = self.meta.get('xlabel', None)
-          if kind[i] == 'empirical': xlab = self.meta.get('xdetail', xlab)
-        ylab = ''
-        if ylabel:
-          ylab = self.meta.get('ylabel', None)
-          if kind[i] == 'empirical': ylab = self.meta.get('ydetail', ylab)
-        if exp_name is None: exp_name = self.name
-        if i == 0:
-          ylab = '\n'.join(exp_name.split('_'))
-
-        plotfn(df, axes[i], xlabel=xlab, ylabel=ylab, kind=kind)
-        if show_titles:
-          axes[i].set_title(names[i], y=1.0, pad=14, fontsize=20)
-        axes[i].get_yaxis().set_ticks([])
 
 
 # ==================================================================================================
@@ -356,9 +321,11 @@ def sum_responses(stimuli, responses, during_cs=None, during_ctx=None, during_us
 def conditioned_response(stimuli, responses, during_cs, during_us=False):
   """Calculates conditioned response for a single trial."""
   assert len(stimuli) == len(responses)
-  assert all(0 <= r <= 1 for r in responses)
+  print(stimuli, responses)
   num = sum_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
   denom = sum_responses(stimuli, [1] * len(responses), during_cs=during_cs, during_us=during_us)
+  print(num, denom)
+  # assert False
   if denom == 0: return 0
   return float(num) / denom
 
@@ -366,24 +333,29 @@ def conditioned_response(stimuli, responses, during_cs, during_us=False):
 def suppression_ratio(stimuli, responses, during_cs, during_us=False):
   """Calculates suppression ratio for a single trial."""
   assert len(stimuli) == len(responses)
-  assert all(0 <= r <= 1 for r in responses)
-  # Invert responses to mimic aversive behavior observations (see paper fo details).
-  responses = [1 - r for r in responses]
+  # Invert responses to mimic aversive behavior preparations (see paper for details).
+  print(responses)
+  max_r = max(responses)
+  responses = [max_r - r for r in responses]
+  print(max_r, responses)
+  print(stimuli)
   cs = sum_responses(stimuli, responses, during_cs=during_cs, during_us=during_us)
   ctx = sum_responses(stimuli, responses, during_cs=[], during_us=during_us)
   num = cs
   denom = cs + ctx
+  print(cs, ctx)
+  assert False
   if denom == 0: return 0
   return float(num) / denom
 
 
 def trials_to_sessions(
-    df,
-    trials_per_session,
-    keep_first=False,
-    trial_name='trial',
-    session_name='session',
-    value_name='value',
+  df,
+  trials_per_session,
+  keep_first=False,
+  trial_name='trial',
+  session_name='session',
+  value_name='value',
 ):
   """Aggregate consecutive spans of trials into sessions through averaging. Spans have length
   `trials_per_session`. Optionally, the first trial can be included (via `keep_first`)."""
@@ -433,20 +405,20 @@ def _pt_to_data_coord(ax, x, y):
 
 
 def plot_lines(
-    df,
-    x='trial',
-    y='value',
-    group='group',
-    split='variable',
-    legend=True,
-    label=True,
-    xlabel=None,
-    ylabel='',
-    yaxis=None,
-    ax=None,
-    label_fontsize=12,
-    legend_cols=1,
-    legend_pos=(0.5, -0.3),
+  df,
+  x='trial',
+  y='value',
+  group='group',
+  split='variable',
+  legend=True,
+  label=True,
+  xlabel=None,
+  ylabel='',
+  yaxis=None,
+  ax=None,
+  label_fontsize=12,
+  legend_cols=1,
+  legend_pos=(0.5, -0.3),
 ):
   """Plot line graph, coloring by `group` and splitting into multiple lines within a group using 
   `split`. Expects `df` in long-form.
@@ -487,18 +459,18 @@ def plot_lines(
 
 
 def plot_bars(
-    df,
-    x='group',
-    y='value',
-    split='variable',
-    label='variable',
-    xlabel=None,
-    ylabel='',
-    yaxis=None,
-    ax=None,
-    barfrac=1.0,
-    label_fontsize=12,
-    wrap=None,
+  df,
+  x='group',
+  y='value',
+  split='variable',
+  label='variable',
+  xlabel=None,
+  ylabel='',
+  yaxis=None,
+  ax=None,
+  barfrac=0.6,
+  label_fontsize=12,
+  wrap=None,
 ):
   """Plot bar graph, coloring by `group` and splitting into multiple bars within a group using 
   `split`. Expects `df` in long-form.
@@ -534,8 +506,8 @@ def plot_bars(
   ax.set_xticklabels([
     '\n'.join(textwrap.wrap(x, wrap, break_long_words=False)) if wrap is not None else x for x in xs
   ])
-  ax.margins(x=0)
-  #ax.set_xlim(len(splits) * width / 2 - 1, len(xs) + len(splits) * width / 2)
+  # ax.margins(x=0)
+  # ax.set_xlim(len(splits) * width / 2 - 1, len(xs) + len(splits) * width / 2)
   if yaxis is not None:
     ax.set_ylim(yaxis[0], yaxis[1])
     ax.set_yticks(np.arange(yaxis[0], yaxis[1] + yaxis[2], step=yaxis[2]))

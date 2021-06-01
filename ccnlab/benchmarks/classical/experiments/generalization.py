@@ -8,7 +8,6 @@ class Generalization_NovelVsInhibitor(cc.ClassicalConditioningExperiment):
 
   Source: 3.2 - Figure 8
   """
-
   def __init__(self, n=10):
     train = [
       cc.seq(
@@ -26,8 +25,7 @@ class Generalization_NovelVsInhibitor(cc.ClassicalConditioningExperiment):
       ),
     ]
     super().__init__({
-      'control':
-      cc.seq(
+      'control': cc.seq(
         *train,
         cc.seq(
           cc.trial('A'),
@@ -35,8 +33,7 @@ class Generalization_NovelVsInhibitor(cc.ClassicalConditioningExperiment):
           name='test',
         ),
       ),
-      'external inhibition':
-      cc.seq(
+      'external inhibition': cc.seq(
         *train,
         cc.seq(
           cc.trial('AC'),
@@ -44,8 +41,7 @@ class Generalization_NovelVsInhibitor(cc.ClassicalConditioningExperiment):
           name='test',
         ),
       ),
-      'conditioned inhibition':
-      cc.seq(
+      'conditioned inhibition': cc.seq(
         *train,
         cc.seq(
           cc.trial('AX'),
@@ -100,7 +96,6 @@ class Generalization_AddVsRemove(cc.ClassicalConditioningExperiment):
 
   Source: 3.3 - Figure 9
   """
-
   def __init__(self, n_train=500, n_test=4):
     # We need to separate test phases for each variable being tested. Otherwise, e.g. for a test
     # trial that only tests A, we would count 0 for AB and ABC which were not presented.

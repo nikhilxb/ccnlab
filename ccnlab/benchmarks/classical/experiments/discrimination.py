@@ -8,15 +8,14 @@ class Discrimination_ReinforcedVsNonreinforced(cc.ClassicalConditioningExperimen
 
   Source: 4.1 - Figure 10
   """
-
   def __init__(self, n=250):
     super().__init__({
       'main':
-      cc.seq(
-        cc.seq(cc.trial('A+'), name='train-A'),
-        cc.seq(cc.trial('B-'), name='train-B'),
-        repeat=n,
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+'), name='train-A'),
+          cc.seq(cc.trial('B-'), name='train-B'),
+          repeat=n,
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -73,16 +72,15 @@ class Discrimination_PositivePatterning(cc.ClassicalConditioningExperiment):
 
   Source: 4.2 - Figure 11
   """
-
   def __init__(self, n=480):
     super().__init__({
       'main':
-      cc.seq(
-        cc.seq(cc.trial('A-'), name='train-A'),
-        cc.seq(cc.trial('B-'), name='train-B'),
-        cc.seq(cc.trial('AB+'), name='train-AB'),
-        repeat=n,
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A-'), name='train-A'),
+          cc.seq(cc.trial('B-'), name='train-B'),
+          cc.seq(cc.trial('AB+'), name='train-AB'),
+          repeat=n,
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -155,16 +153,15 @@ class Discrimination_NegativePatterning(cc.ClassicalConditioningExperiment):
 
   Source: 4.3 - Figure 12
   """
-
   def __init__(self, n=480):
     super().__init__({
       'main':
-      cc.seq(
-        cc.seq(cc.trial('A+'), name='train-A'),
-        cc.seq(cc.trial('B+'), name='train-B'),
-        cc.seq(cc.trial('AB-'), name='train-AB'),
-        repeat=n,
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+'), name='train-A'),
+          cc.seq(cc.trial('B+'), name='train-B'),
+          cc.seq(cc.trial('AB-'), name='train-AB'),
+          repeat=n,
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -236,23 +233,22 @@ class Discrimination_NegativePatterningCommonCue(cc.ClassicalConditioningExperim
 
   Source: 4.5 - Figure 14
   """
-
   def __init__(self, n=70):
     super().__init__({
       'control':
-      cc.seq(
-        cc.seq(cc.trial('A+'), name='train-A'),
-        cc.seq(cc.trial('B+'), name='train-B'),
-        cc.seq(cc.trial('AB-'), name='train-AB'),
-        repeat=n,
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+'), name='train-A'),
+          cc.seq(cc.trial('B+'), name='train-B'),
+          cc.seq(cc.trial('AB-'), name='train-AB'),
+          repeat=n,
+        ),
       'common cue':
-      cc.seq(
-        cc.seq(cc.trial('AC+'), name='train-AC'),
-        cc.seq(cc.trial('BC+'), name='train-BC'),
-        cc.seq(cc.trial('ABC-'), name='train-ABC'),
-        repeat=n,
-      ),
+        cc.seq(
+          cc.seq(cc.trial('AC+'), name='train-AC'),
+          cc.seq(cc.trial('BC+'), name='train-BC'),
+          cc.seq(cc.trial('ABC-'), name='train-ABC'),
+          repeat=n,
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -332,16 +328,15 @@ class Discrimination_NegativePatterningThreeCues(cc.ClassicalConditioningExperim
 
   Source: 4.6 - Figure 15
   """
-
   def __init__(self, n=50):
     super().__init__({
       'main':
-      cc.seq(
-        cc.seq(cc.trial('A+'), name='train-A'),
-        cc.seq(cc.trial('BC+'), name='train-BC'),
-        cc.seq(cc.trial('ABC-'), name='train-ABC'),
-        repeat=n,
-      ),
+        cc.seq(
+          cc.seq(cc.trial('A+'), name='train-A'),
+          cc.seq(cc.trial('BC+'), name='train-BC'),
+          cc.seq(cc.trial('ABC-'), name='train-ABC'),
+          repeat=n,
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -402,25 +397,24 @@ class Discrimination_Biconditional(cc.ClassicalConditioningExperiment):
 
   Source: 4.7, 4.9 - Figure 16
   """
-
   def __init__(self, n_componennt=50, n_biconditional=100):
     super().__init__({
       'component':
-      cc.seq(
-        cc.seq(cc.trial('AC+'), name='train-AC'),
-        cc.seq(cc.trial('AD+'), name='train-AD'),
-        cc.seq(cc.trial('BC-'), name='train-BC'),
-        cc.seq(cc.trial('BD-'), name='train-BD'),
-        repeat=n_componennt,
-      ),
+        cc.seq(
+          cc.seq(cc.trial('AC+'), name='train-AC'),
+          cc.seq(cc.trial('AD+'), name='train-AD'),
+          cc.seq(cc.trial('BC-'), name='train-BC'),
+          cc.seq(cc.trial('BD-'), name='train-BD'),
+          repeat=n_componennt,
+        ),
       'biconditional':
-      cc.seq(
-        cc.seq(cc.trial('AC+'), name='train-AC'),
-        cc.seq(cc.trial('AD-'), name='train-AD'),
-        cc.seq(cc.trial('BC-'), name='train-BC'),
-        cc.seq(cc.trial('BD+'), name='train-BD'),
-        repeat=n_biconditional,
-      ),
+        cc.seq(
+          cc.seq(cc.trial('AC+'), name='train-AC'),
+          cc.seq(cc.trial('AD-'), name='train-AD'),
+          cc.seq(cc.trial('BC-'), name='train-BC'),
+          cc.seq(cc.trial('BD+'), name='train-BD'),
+          repeat=n_biconditional,
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -464,12 +458,12 @@ class Discrimination_Biconditional(cc.ClassicalConditioningExperiment):
             '+': cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'C']),
           } if x['phase'] == 'train-AC' else {
             ('+' if x['group'] == 'component' else '\u2212'):
-            cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'D']),
+              cc.conditioned_response(x['timesteps'], x['responses'], ['A', 'D']),
           } if x['phase'] == 'train-AD' else {
             '\u2212': cc.conditioned_response(x['timesteps'], x['responses'], ['B', 'C']),
           } if x['phase'] == 'train-BC' else {
             ('\u2212' if x['group'] == 'component' else '+'):
-            cc.conditioned_response(x['timesteps'], x['responses'], ['B', 'D']),
+              cc.conditioned_response(x['timesteps'], x['responses'], ['B', 'D']),
           } if x['phase'] == 'train-BD' else None,
           include_trial=False,
           include_trial_in_phase=True,
@@ -489,21 +483,20 @@ class Discrimination_FeaturePositive(cc.ClassicalConditioningExperiment):
 
   Source: 4.12, 4.13 - Figure 20
   """
-
   def __init__(self, n_sim=360, n_serial=780):
     super().__init__({
       'simultaneous':
-      cc.seq(
-        cc.seq(cc.trial('BA+'), name='train-BA'),
-        cc.seq(cc.trial('A-'), name='train-A'),
-        repeat=n_sim // 2,
-      ),
+        cc.seq(
+          cc.seq(cc.trial('BA+'), name='train-BA'),
+          cc.seq(cc.trial('A-'), name='train-A'),
+          repeat=n_sim // 2,
+        ),
       'serial':
-      cc.seq(
-        cc.seq(cc.trial(('B', 0, 4), ('A', 4, 8), ('+', 7, 8)), name='train-BA'),
-        cc.seq(cc.trial('A-'), name='train-A'),
-        repeat=n_serial // 2,
-      ),
+        cc.seq(
+          cc.seq(cc.trial(('B', 0, 4), ('A', 4, 8), ('+', 7, 8)), name='train-BA'),
+          cc.seq(cc.trial('A-'), name='train-A'),
+          repeat=n_serial // 2,
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
@@ -570,27 +563,26 @@ class Discrimination_FeatureNegative(cc.ClassicalConditioningExperiment):
 
   Source: 4.14, 4.15 - Figure 21
   """
-
   def __init__(self, n_acquisition=2, n_sim=3, n_serial=12, tps=4):
     super().__init__({
       'simultaneous':
-      cc.seq(
-        cc.seq(cc.trial('A+'), repeat=n_acquisition * tps, name='acquisition'),
         cc.seq(
-          cc.seq(cc.trial('BA-'), name='train-BA'),
-          cc.seq(cc.trial('A+'), name='train-A'),
-          repeat=n_sim * tps,
+          cc.seq(cc.trial('A+'), repeat=n_acquisition * tps, name='acquisition'),
+          cc.seq(
+            cc.seq(cc.trial('BA-'), name='train-BA'),
+            cc.seq(cc.trial('A+'), name='train-A'),
+            repeat=n_sim * tps,
+          ),
         ),
-      ),
       'serial':
-      cc.seq(
-        cc.seq(cc.trial('A+'), repeat=n_acquisition * tps, name='acquisition'),
         cc.seq(
-          cc.seq(cc.trial(('B', 0, 4), ('A', 4, 8)), name='train-BA'),
-          cc.seq(cc.trial('A+'), name='train-A'),
-          repeat=n_serial * tps,
-        ),
-      )
+          cc.seq(cc.trial('A+'), repeat=n_acquisition * tps, name='acquisition'),
+          cc.seq(
+            cc.seq(cc.trial(('B', 0, 4), ('A', 4, 8)), name='train-BA'),
+            cc.seq(cc.trial('A+'), name='train-A'),
+            repeat=n_serial * tps,
+          ),
+        )
     })
     self._tps = tps
     self.meta = dict(

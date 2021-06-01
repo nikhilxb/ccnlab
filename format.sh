@@ -1,1 +1,1 @@
-yapf --recursive --in-place --verbose --exclude \"venv/*,__pycache__/*\" ccnlab/* scripts/*
+yapf --recursive --in-place --verbose --exclude \"venv/*,__pycache__/*\" ccnlab/* scripts/*.py

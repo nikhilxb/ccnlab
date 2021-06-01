@@ -9,24 +9,23 @@ class Acquisition_ContinuousVsPartial(cc.ClassicalConditioningExperiment):
 
   Source: 1.1, 1.2 - Figure 2
   """
-
   def __init__(self, n=64, partial_prob=0.5):
     super().__init__({
       'continuous':
-      cc.seq(
-        cc.trial('A+'),
-        repeat=n,
-        name='train',
-      ),
+        cc.seq(
+          cc.trial('A+'),
+          repeat=n,
+          name='train',
+        ),
       'partial':
-      cc.seq(
-        cc.sample({
-          cc.trial('A+'): partial_prob,
-          cc.trial('A-'): 1 - partial_prob,
-        }),
-        repeat=n,
-        name='train',
-      ),
+        cc.seq(
+          cc.sample({
+            cc.trial('A+'): partial_prob,
+            cc.trial('A-'): 1 - partial_prob,
+          }),
+          repeat=n,
+          name='train',
+        ),
     })
     self.meta = dict(
       ylabel='conditioned response',
