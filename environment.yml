@@ -1,0 +1,10 @@
+name: ccnlab
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.7.10
+  - pip>=21.1
+  - conda>=4.8
+  - pip:
+    - -r ./requirements.txt
