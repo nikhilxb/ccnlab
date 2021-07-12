@@ -16,21 +16,14 @@ Please refer to our paper for more background, technical details, and baseline r
 
 ## Installation
 
-Clone this repository and run the setup script:
+1. Ensure you have Anaconda installed.
+2. Clone this repository and set up the included Anaconda environment, which installs Python 3.7.10 and pip dependencies (including Jupyter Notebook).
 
 ```bash
-source setup.sh
+conda env create -f environment.yml
+conda activate ccnlab
 ```
-
-This will create a virtual environment and install the necessary dependencies, including Jupyter notebook.
-
-To activate the virtual environment (if not already active):
-
-```bash
-source venv/bin/activate
-```
-
-To start Jupyter run:
+3. To start Jupyter run:
 
 ```bash
 jupyter notebook
