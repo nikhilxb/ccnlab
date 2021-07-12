@@ -41,6 +41,11 @@ class Recovery_LatentInhibition(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='mean latency [log s]',
       citation='Grahame et al. (1994)',
+      animal='rat',
+      cs='auditory',
+      us='shock',
+      response='drinking',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -102,6 +107,11 @@ class Recovery_Overshadowing(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='mean latency [log s]',
       citation='Matzel et al. (1985)',
+      animal='rat',
+      cs='visual, auditory',
+      us='shock',
+      response='drinking',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -156,6 +166,11 @@ class Recovery_ExternalDisinhibition(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='median approach-withdrawal ratio',
       citation='Bottjer (1982)',
+      animal='pigeon',
+      cs='visual',
+      us='food',
+      response='feeding',
+      preparation='appetitive conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -213,6 +228,11 @@ class Recovery_SpontaneousRecovery(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='conditioned response [#/min]',
       citation='Rescorla (2004)',
+      animal='rat',
+      cs='visual, auditory',
+      us='food',
+      response='feeding',
+      preparation='appetitive conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -315,6 +335,11 @@ class Recovery_Renewal(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='conditioned response [%]',
       citation='Harris et al. (2000)',
+      animal='rat',
+      cs='auditory',
+      us='shock',
+      response='freezing',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(columns=['group', 'A'], data=[
@@ -369,6 +394,11 @@ class Recovery_Reinstatement(cc.ClassicalConditioningExperiment):
       ylabel='suppression ratio',
       ydetail='suppression ratio',
       citation='Rescorla & Heth (1975)',
+      animal='rat',
+      cs='auditory',
+      us='shock',
+      response='bar pressing',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(

@@ -45,6 +45,11 @@ class Competition_RelativeValidity(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='conditioned response [%]',
       citation='Wagner et al. (1968)',
+      animal='rat',
+      cs='visual, auditory',
+      us='food',
+      response='bar pressing',
+      preparation='appetitive conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(columns=['group', 'X'], data=[
@@ -102,6 +107,11 @@ class Competition_OvershadowingAndForwardBlocking(cc.ClassicalConditioningExperi
       ylabel='conditioned response',
       ydetail='elevation scores',
       citation='Holland and Fox (2003)',
+      animal='rat',
+      cs='visual, auditory',
+      us='food',
+      response='feeding',
+      preparation='appetitive conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -169,6 +179,11 @@ class Competition_Unblocking(cc.ClassicalConditioningExperiment):
       ylabel='suppression ratio',
       ydetail='suppression ratio',
       citation='Dickinson et al. (1976)',
+      animal='rat',
+      cs='visual, auditory',
+      us='shock',
+      response='bar pressing',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -225,6 +240,11 @@ class Competition_BackwardBlocking(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='mean latency [log s]',
       citation='Miller and Matute (1996)',
+      animal='rat',
+      cs='auditory',
+      us='shock',
+      response='drinking',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(columns=['group', 'A'], data=[
@@ -283,6 +303,11 @@ class Competition_Overexpectation(cc.ClassicalConditioningExperiment):
       ylabel='suppression ratio',
       ydetail='suppression ratio',
       citation='Rescorla (1970)',
+      animal='rat',
+      cs='visual, auditory',
+      us='shock',
+      response='bar pressing',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -344,6 +369,11 @@ class Competition_Superconditioning(cc.ClassicalConditioningExperiment):
       ylabel='suppression ratio',
       ydetail='suppression ratio',
       citation='Rescorla (1971)',
+      animal='rat',
+      cs='visual, auditory',
+      us='shock',
+      response='bar pressing',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(

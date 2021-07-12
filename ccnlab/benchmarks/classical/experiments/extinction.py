@@ -38,8 +38,13 @@ class Extinction_ContinuousVsPartial(cc.ClassicalConditioningExperiment):
     })
     self.meta = dict(
       ylabel='conditioned response',
-      ydetail='suppression [(ctx-cs)/cs]',
+      ydetail='suppression [(ctx-cs)/ctx]',
       citation='Wagner et al. (1967)',
+      animal='rat',
+      cs='visual, auditory',
+      us='shock',
+      response='bar pressing',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(

@@ -29,8 +29,13 @@ class Acquisition_ContinuousVsPartial(cc.ClassicalConditioningExperiment):
     })
     self.meta = dict(
       ylabel='conditioned response',
-      ydetail='time to error [s]',
+      ydetail='conditioned response',
       citation='Wagner et al. (1967)',
+      animal='rat',
+      cs='visual',
+      us='shock',
+      response='auditory startle',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(

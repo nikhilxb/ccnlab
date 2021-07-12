@@ -47,6 +47,11 @@ class Transfer_Reacquisition(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='elevation score',
       citation='Ricker & Bouton (1996)',
+      animal='rat',
+      cs='visual, auditory',
+      us='food',
+      response='feeding',
+      preparation='appetitive conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(

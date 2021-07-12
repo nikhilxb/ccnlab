@@ -54,6 +54,11 @@ class Generalization_NovelVsInhibitor(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='ratings',
       citation='Kutlu & Schmajuk (2012)',
+      animal='human',
+      cs='visual',
+      us='value',
+      response='value prediction',
+      preparation='value prediction',
     )
     self.empirical_results = pd.DataFrame(
       columns=['group', 'variable', 'value'],
@@ -123,6 +128,11 @@ class Generalization_AddVsRemove(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='conditioned response [%]',
       citation='Brandon et al. (2000)',
+      animal='rabbit',
+      cs='visual, auditory, tactile',
+      us='shock',
+      response='eyeblink',
+      preparation='eyeblink conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(

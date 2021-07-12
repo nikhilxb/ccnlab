@@ -21,6 +21,11 @@ class Discrimination_ReinforcedVsNonreinforced(cc.ClassicalConditioningExperimen
       ylabel='conditioned response',
       ydetail='conditioned response [%]',
       citation='Campolattaro et al. (2008)',
+      animal='rat',
+      cs='visual, auditory',
+      us='shock',
+      response='eyeblink',
+      preparation='eyeblink conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -86,6 +91,11 @@ class Discrimination_PositivePatterning(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='conditioned response [%]',
       citation='Bellingham et al. (1985)',
+      animal='rat',
+      cs='visual, auditory',
+      us='water',
+      response='drinking',
+      preparation='appetitive conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -167,6 +177,11 @@ class Discrimination_NegativePatterning(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='conditioned response [%]',
       citation='Bellingham et al. (1985)',
+      animal='rat',
+      cs='visual, auditory',
+      us='water',
+      response='drinking',
+      preparation='appetitive conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -254,6 +269,11 @@ class Discrimination_NegativePatterningCommonCue(cc.ClassicalConditioningExperim
       ylabel='conditioned response',
       ydetail='conditioned response [#/min]',
       citation='Redhead & Pearce (1998)',
+      animal='pigeon',
+      cs='visual',
+      us='food',
+      response='feeding',
+      preparation='appetitive conditioning',
     )
     self.empirical_results = pd.concat([
       pd.melt(
@@ -342,6 +362,11 @@ class Discrimination_NegativePatterningThreeCues(cc.ClassicalConditioningExperim
       ylabel='conditioned response',
       ydetail='conditioned response [#/min]',
       citation='Redhead & Pearce (1995)',
+      animal='pigeon',
+      cs='visual',
+      us='food',
+      response='feeding',
+      preparation='appetitive conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -392,7 +417,7 @@ class Discrimination_NegativePatterningThreeCues(cc.ClassicalConditioningExperim
 class Discrimination_Biconditional(cc.ClassicalConditioningExperiment):
   """Biconditional discrimination between compounds (AC+/BD+ vs. AD-/BC-, where no single CS
   predicts reinforcement or non-reinforcement) is possible but harder than component discrimination
-  between compounds (AC+/AD+ vs. BC-/BD-, where A and B predict reinforcment and non-reinforcement,
+  between compounds (AC+/AD+ vs. BC-/BD-, where A and B predict reinforcement and non-reinforcement,
   respectively).
 
   Source: 4.7, 4.9 - Figure 16
@@ -420,6 +445,11 @@ class Discrimination_Biconditional(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='conditioned response [%]',
       citation='Saavedra (1975)',
+      animal='rabbit',
+      cs='visual, auditory',
+      us='shock',
+      response='eyeblink',
+      preparation='eyeblink conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -502,6 +532,11 @@ class Discrimination_FeaturePositive(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='conditioned response [%]',
       citation='Ross & Holland (1981)',
+      animal='rat',
+      cs='visual, auditory',
+      us='food',
+      response='head jerk',
+      preparation='appetitive conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -589,6 +624,11 @@ class Discrimination_FeatureNegative(cc.ClassicalConditioningExperiment):
       ylabel='suppression ratio',
       ydetail='suppression ratio',
       citation='Holland (1984)',
+      animal='rat',
+      cs='visual, auditory',
+      us='shock',
+      response='bar pressing',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(

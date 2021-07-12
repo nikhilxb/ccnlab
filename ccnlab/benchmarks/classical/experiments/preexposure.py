@@ -37,6 +37,11 @@ class PreExposure_LatentInhibitionVsPerceptualLearning(cc.ClassicalConditioningE
       ylabel='conditioned response',
       ydetail='1 - mean errors',
       citation='Lubow, Rifkin, & Alek (1976)',
+      animal='rat',
+      cs='olfactory',
+      us='food',
+      response='feeding',
+      preparation='appetitive conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -87,6 +92,11 @@ class PreExposure_USPreExposure(cc.ClassicalConditioningExperiment):
       ylabel='suppression ratio',
       ydetail='suppression ratio',
       citation='Kamin (1961)',
+      animal='rat',
+      cs='auditory',
+      us='shock',
+      response='bar pressing',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(columns=['group', 'A'], data=[

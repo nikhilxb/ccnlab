@@ -29,6 +29,11 @@ class Inhibition_InhibitorExtinction(cc.ClassicalConditioningExperiment):
       ylabel='suppression ratio',
       ydetail='suppression ratio',
       citation='Zimmer-Hart & Rescorla (1974)',
+      animal='rat',
+      cs='visual, auditory',
+      us='shock',
+      response='bar pressing',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(

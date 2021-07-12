@@ -28,6 +28,11 @@ class HigherOrder_SensoryPreconditioning(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='conditioned response',
       citation='Brogden (1939)',
+      animal='dog',
+      cs='visual, auditory',
+      us='shock',
+      response='flexion',
+      preparation='reflex conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
@@ -104,6 +109,11 @@ class HigherOrder_SecondOrderConditioning(cc.ClassicalConditioningExperiment):
       ylabel='conditioned response',
       ydetail='mean latency [log s]',
       citation='Yin et al. (1994)',
+      animal='rat',
+      cs='auditory',
+      us='shock',
+      response='drinking',
+      preparation='fear conditioning',
     )
     self.empirical_results = pd.melt(
       pd.DataFrame(
